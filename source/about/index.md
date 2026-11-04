@@ -11,7 +11,7 @@ comments: false
 
 大概会出现这些内容：
 
-- 🎬 番剧、游戏、轻小说的观后感
+- 📚 读过的书、看过的电影
 - 💻 写代码时踩过的坑和一些笔记
 - 🌙 日常生活里想记下来的瞬间
 
@@ -20,8 +20,7 @@ comments: false
 | 项目 | 用的是 |
 |---|---|
 | 生成器 | Hexo |
-| 主题 | Butterfly（改成了国风 × 二次元：宣纸、墨、朱砂） |
-| 看板娘 | Live2D（本地打包，不依赖外网） |
+| 主题 | [Sakura](https://github.com/honjun/hexo-theme-sakura)（改过配色和背景） |
 | 托管 | GitHub Pages |
 | 构建 | GitHub Actions |
 

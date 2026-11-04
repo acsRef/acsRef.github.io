@@ -20,7 +20,7 @@ photos:
 ## 这个博客是怎么搭的
 
 - **Hexo**：把 Markdown 变成静态网页
-- **Butterfly 主题**：二次元风格，可玩性高
+- **Sakura 主题**：改成了现在这套配色和背景
 - **GitHub Pages**：免费托管，地址是 `https://acsref.github.io`
 - **GitHub Actions**：你只管 `push`，它自动构建并发布
 
@@ -39,7 +39,7 @@ photos:
 
 打算在这里放这些内容：
 
-- 番剧 / 游戏 / 轻小说的观后感
+- 读过的书和看过的电影
 - 写代码时踩过的坑
 - 一些随手拍的日常
 

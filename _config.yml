@@ -4,8 +4,8 @@
 # ---------------- 站点信息 ----------------
 title: acsRef
 subtitle: '星屑ノート —— 月下点墨，落樱为记'
-description: 'acsRef 的个人博客 —— 国风 × 二次元 × 代码笔记'
-keywords: 博客,动漫,二次元,前端,Python,Hexo
+description: 'acsRef 的个人博客 —— 代码、随笔与日常'
+keywords: 博客,前端,Python,Hexo,笔记
 author: acsRef
 language: zh-CN
 timezone: 'Asia/Shanghai'

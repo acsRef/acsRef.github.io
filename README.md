@@ -1,6 +1,6 @@
 # 星屑ノート
 
-acsRef 的个人博客：Hexo + [hexo-theme-sakura](https://github.com/honjun/hexo-theme-sakura)（二次元风，已本地化改造），托管在 GitHub Pages，由 GitHub Actions 自动构建。
+acsRef 的个人博客：Hexo + [hexo-theme-sakura](https://github.com/honjun/hexo-theme-sakura)（改过配色与背景，主题已纳入本仓库），托管在 GitHub Pages，由 GitHub Actions 自动构建。
 
 - 线上地址：<https://acsref.github.io>
 - 源码仓库：<https://github.com/acsRef/acsRef.github.io>
