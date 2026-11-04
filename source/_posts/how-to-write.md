@@ -7,6 +7,8 @@ tags:
 categories:
   - 折腾记录
 description: 新建一篇文章、写 Markdown、push —— 没了。
+photos:
+  - /img/cover-bamboo.svg
 ---
 
 这篇是给你的「操作备忘」，忘了怎么发文章的时候点开看。

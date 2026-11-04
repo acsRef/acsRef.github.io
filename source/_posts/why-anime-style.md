@@ -7,6 +7,8 @@ tags:
 categories:
   - 随想
 description: 一点关于配色、留白和「看得下去」的碎碎念。
+photos:
+  - /img/cover-window.svg
 ---
 
 技术博客的默认长相，大概都是白底、灰字、一条分割线。它不难看，但也不太让人想多待一会儿。

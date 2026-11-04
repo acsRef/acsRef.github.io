@@ -7,6 +7,8 @@ tags:
 categories:
   - 站点
 description: 这个博客的第一篇文章，顺便说说它是怎么跑起来的。
+photos:
+  - /img/hero-ink.svg
 ---
 
 欢迎来到 **星屑ノート** ✨

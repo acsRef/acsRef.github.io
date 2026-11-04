@@ -9,7 +9,8 @@ prefixName: 星屑ノート
 siteName: acsRef
 
 favicon: /img/seal.svg
-avatar: /img/avatar.svg
+# 用 GitHub 上的头像（改这个 URL 就能换）
+avatar: https://github.com/acsRef.png?size=200
 url: https://acsref.github.io
 description: 月下点墨，落樱为记 —— 国风 × 二次元 × 代码笔记
 
