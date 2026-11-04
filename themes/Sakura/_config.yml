@@ -1,0 +1,102 @@
+# ===========================================================
+# hexo-theme-sakura 主题配置（本站）
+# 上游：https://github.com/honjun/hexo-theme-sakura
+# 主题已放进 themes/Sakura 并纳入本仓库，改动随站点一起版本管理。
+# ===========================================================
+
+# 站点名（prefixName 是标题前的小字，siteName 是主名）
+prefixName: 星屑ノート
+siteName: acsRef
+
+favicon: /img/seal.svg
+avatar: /img/avatar.svg
+url: https://acsref.github.io
+description: 月下点墨，落樱为记 —— 国风 × 二次元 × 代码笔记
+
+# 主题自带的静态资源 CDN（字体、图标、pjax 等）
+# cdn 置空：否则模板会把头像/社交图标也拼到作者 CDN 上，显示成别人的图。
+# 字体图标走 lib.min.css 里写死的 jsdelivr 地址，不用这个变量。
+cdn: ''
+pjax: 1
+mathjax: 0
+
+notice: 这里放番剧感想、代码笔记和一些走神的时刻。
+lazyloadImg: /img/loading.svg
+
+menus:
+  首页: { path: /, fa: fa-fort-awesome faa-shake }
+  归档: { path: /archives, fa: fa-archive faa-shake }
+  标签: { path: /tags, fa: fa-tags faa-vertical }
+  分类: { path: /categories, fa: fa-folder-open faa-vertical }
+  关于: { path: /about, fa: fa-leaf faa-wrench }
+
+# 首页文章排序：-1 新的在前
+homePageSortType: -1
+homeArticleShown: 10
+
+# 首屏背景图：用站点自带的国风插画
+bg:
+  - /img/hero-ink.svg
+  - /img/cover-bamboo.svg
+  - /img/cover-window.svg
+
+# 背景样式：filter-dim 阴影 / filter-grid 横条 / filter-dot 点点
+bgclass: filter-dim
+
+# 首屏下方的入口卡片（留空则不显示）
+startdash: []
+
+# 建站时间（页脚计时用）
+siteBuildingTime: 11/04/2026
+
+# 社交（PC 端）
+social:
+  github: { url: https://github.com/acsRef, img: /img/social/github.svg }
+  email: { url: mailto:1803887234@qq.com, img: /img/social/email.svg }
+
+# 社交（移动端）
+msocial:
+  github: { url: https://github.com/acsRef, fa: fa-github, color: 23201c }
+  email: { url: mailto:1803887234@qq.com, fa: fa-envelope, color: b03a2e }
+
+# 赞赏页（留空，避免出现别人的收款码）
+donate:
+  paypal:
+  alipay:
+  wechat:
+  wechatSQ:
+
+# 首页视频（关掉）
+movies:
+  url:
+  name:
+
+# 音乐播放器（先关掉自动播放）
+aplayer:
+  id: 2660651585
+  server: netease
+  type: playlist
+  fixed: false
+  autoplay: false
+  loop: all
+  order: random
+  preload: none
+  volume: 0.7
+  mutex: true
+
+# 评论：Valine 需要 LeanCloud 账号，先关
+valine: false
+v_appId:
+v_appKey:
+
+waline:
+  enable: false
+  serverURL:
+  visitor: false
+  comment_count: true
+  avatar: mp
+  guest_info: nick
+  pageSize: 10
+  placeholder: 说点什么吧～
+  requiredFields: [ 'nick','mail' ]
+  background:

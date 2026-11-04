@@ -1,6 +1,6 @@
 # 星屑ノート
 
-acsRef 的个人博客：Hexo + Butterfly（国风 × 二次元：宣纸、墨、朱砂），带一只 Live2D 看板娘，托管在 GitHub Pages，由 GitHub Actions 自动构建。
+acsRef 的个人博客：Hexo + [hexo-theme-sakura](https://github.com/honjun/hexo-theme-sakura)（二次元风，已本地化改造），托管在 GitHub Pages，由 GitHub Actions 自动构建。
 
 - 线上地址：<https://acsref.github.io>
 - 源码仓库：<https://github.com/acsRef/acsRef.github.io>
@@ -83,18 +83,15 @@ npx hexo new "文章标题"
 ```
 .
 ├── .github/workflows/deploy.yml   # 自动构建 + 发布
-├── _config.yml                    # 站点配置（标题、网址、菜单、搜索）
-├── _config.butterfly.yml          # 主题配置（配色、样式、侧边栏、注入）
+├── _config.yml                    # 站点配置（标题、网址、归档、搜索数据）
+├── themes/Sakura/                 # 主题（honjun/hexo-theme-sakura，已纳入仓库）
+│   └── _config.yml                # 主题配置：站点名、菜单、背景图、社交
 ├── package.json                   # 依赖清单
 ├── source/
 │   ├── _posts/                    # 文章（Markdown）
 │   ├── about/                     # 关于页
 │   ├── tags/  categories/         # 标签页、分类页
-│   ├── css/anime.css              # 自定义国风样式（宣纸/墨/朱砂）
-│   ├── js/sakura.js               # 落樱
-│   ├── js/live2d.js               # 看板娘初始化
-│   ├── live2d/                    # Live2D 组件与模型（本地，不对外网依赖）
-│   └── img/                       # 头像、横幅、封面、印章等 SVG
+│   └── img/                       # 头像、背景插画、印章、社交图标
 └── public/                        # 构建产物（不提交）
 ```
 
@@ -102,15 +99,17 @@ npx hexo new "文章标题"
 
 | 想改什么 | 改哪里 |
 |---|---|
-| 博客名字 / 副标题 / 描述 | `_config.yml` 顶部 |
-| 菜单、社交图标、头像 | `_config.butterfly.yml` |
-| 主题色、背景渐变 | `_config.butterfly.yml` 的 `theme_color` 和 `background` |
-| 卡片圆角、阴影、字号 | `source/css/anime.css` |
-| 花瓣数量 / 速度 | `source/js/sakura.js` |
-| 看板娘的出场位置 / 大小 | `source/js/live2d.js` 里的 `display` |
-| 换看板娘模型 | 把模型放进 `source/live2d/models/`，改 `jsonPath` |
-| 暗色模式开关 | `_config.butterfly.yml` 的 `darkmode`（当前关闭，原因见注释） |
+| 博客名字 / 站点描述 | `themes/Sakura/_config.yml` 的 `prefixName` / `siteName` / `description` |
+| 顶部菜单 | `themes/Sakura/_config.yml` 的 `menus` |
+| 首屏背景图 | `themes/Sakura/_config.yml` 的 `bg`（放 `source/img/` 里，写 `/img/xxx.svg`） |
+| 头像 / favicon | 同上 `avatar` / `favicon` |
+| 社交图标 | 同上 `social`、`msocial`（图标文件在 `source/img/social/`） |
+| 首页文章条数 / 排序 | 同上 `homeArticleShown` / `homePageSortType` |
+| 主题样式细节 | `themes/Sakura/source/css/`（`style.css` 是主样式） |
+| 站点网址 / 分页 / 搜索数据 | 根目录 `_config.yml` |
 | 部署工作流 | `.github/workflows/deploy.yml` |
+
+> 主题是**放进仓库**的（不是 npm 包），所以升级上游要手动拉新代码再合并；好处是改主题模板、样式都能跟着站点一起版本管理。
 
 ## 图片放哪
 

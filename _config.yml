@@ -84,10 +84,31 @@ search:
   limit: 10000
 
 # ---------------- 主题 ----------------
-theme: butterfly
-
+theme: Sakura
 # ---------------- 部署 ----------------
 # 本博客用 GitHub Actions 构建发布，所以这里留空。
 # 如果以后想在本地一条命令部署，再看 README 里的「本地部署」一节。
 deploy:
   type: ''
+
+# sakura 主题的搜索数据
+jsonContent:
+  enable: true
+  file: content.json
+  # keyword-extractor 不支持中文，关掉关键词提取
+  keywords: false
+  path:
+    posts:
+      title: title
+      date: date
+      path: path
+      text: text
+      excerpt: excerpt
+      categories: categories
+      tags: tags
+
+# 首页 RSS
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
