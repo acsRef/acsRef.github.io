@@ -105,7 +105,11 @@ subtitle:
   enable: true
   effect: true
   source: false
-  sub: 月下点墨，落樱为记
+  # 注意：sub 必须是数组，写成单个字符串 typed.js 会报 strings.map 错误
+  sub:
+    - 月下点墨，落樱为记
+    - 拾几枚星屑，记几页闲话
+    - 国风 × 二次元 × 代码
 
 # ---------------- 动效 ----------------
 enter_transitions: true
