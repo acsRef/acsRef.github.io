@@ -30,10 +30,8 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: 如果 Pages 还没开启，尝试自动开启
+      - name: 读取 Pages 配置
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: 安装依赖
         run: npm ci
