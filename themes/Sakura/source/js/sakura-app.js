@@ -1098,6 +1098,8 @@ var home = location.href,
       }
     },
     VA: function () {
+      // 评论组件 Valine 已不再加载（评论关闭），没有它就直接返回，避免报错中断后续脚本
+      if (typeof Valine === 'undefined') return;
       if (!valine) {
         var valine = new Valine()
         valine.init({
