@@ -78,18 +78,8 @@ movies:
   url:
   name:
 
-# 音乐播放器（先关掉自动播放）
+# 音乐播放器：已移除（模板不再引入 APlayer/Meting，配置留空即可）
 aplayer:
-  id: 2660651585
-  server: netease
-  type: playlist
-  fixed: false
-  autoplay: false
-  loop: all
-  order: random
-  preload: none
-  volume: 0.7
-  mutex: true
 
 # 评论：Valine 需要 LeanCloud 账号，先关
 valine: false

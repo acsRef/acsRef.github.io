@@ -21,6 +21,6 @@
     </div>
   </section>
   <%- partial('_partial/mheader', null, {cache: !config.relative_link}) %>
-  <%- partial('_partial/aplayer', null, {cache: !config.relative_link}) %>
+  <%# 音乐播放器已移除：_partial/aplayer.ejs 不再引入（会额外加载 APlayer + Meting 两个外链脚本） %>
 </body>
 </html>
