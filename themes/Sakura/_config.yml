@@ -9,8 +9,10 @@ prefixName: 星屑ノート
 siteName: acsRef
 
 favicon: /img/seal.svg
-# 用 GitHub 上的头像（改这个 URL 就能换）
-avatar: https://github.com/acsRef.png?size=200
+# 头像：用 GitHub 头像，但经 wsrv 图片代理转发
+# 原因：github.com/xxx.png 会 302 到 avatars.githubusercontent.com，国内多半连不上
+# 想换头像：改下面 url= 后面那串（也可以直接写 /img/xxx.jpg 用本站图片）
+avatar: 'https://wsrv.nl/?url=github.com/acsRef.png&w=200&output=png'
 url: https://acsref.github.io
 description: 月下点墨，落樱为记 —— 代码、随笔与日常
 
