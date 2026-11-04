@@ -112,3 +112,16 @@ feed:
   type: atom
   path: atom.xml
   limit: 20
+
+# ---------------- 文章加密（hexo-blog-encrypt） ----------------
+# 用法：在想加密的文章 front-matter 里加一行 password: 你的密码
+# 没有 password 的文章照常公开。
+# 注意：内容是以 AES 密文形式输出的，页面本身公开，弱密码可能被离线爆破，
+# 真正敏感的东西不要放公网。
+blog_encrypt:
+  enable: true
+  abstract: 这篇文章已加密，输入密码后查看。
+  message: 请输入访问密码
+  theme: default
+  wrong_pass_message: 密码不对，再试一次。
+  wrong_hash_message: 校验失败，请检查密码是否正确。
