@@ -7,7 +7,7 @@
     return;
   }
 
-  var COUNT = window.innerWidth < 768 ? 7 : 16;
+  var COUNT = window.innerWidth < 768 ? 5 : 11;
 
   function rand(min, max) {
     return Math.random() * (max - min) + min;

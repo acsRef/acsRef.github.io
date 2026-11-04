@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="月夜远山，落樱与古亭">
+  <defs>
+    <linearGradient id="night" x1="0" y1="0" x2="0.15" y2="1">
+      <stop offset="0" stop-color="#10131c"/>
+      <stop offset="0.42" stop-color="#1e2433"/>
+      <stop offset="0.72" stop-color="#3a3346"/>
+      <stop offset="0.9" stop-color="#6b4a52"/>
+      <stop offset="1" stop-color="#8c5c58"/>
+    </linearGradient>
+    <radialGradient id="moonHalo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fdf6e3" stop-opacity="0.55"/>
+      <stop offset="0.45" stop-color="#f6e7cf" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#f6e7cf" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ridgeBack" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b3346" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#232a3a" stop-opacity="0.7"/>
+    </linearGradient>
+    <linearGradient id="ridgeMid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c222f"/>
+      <stop offset="1" stop-color="#171c26"/>
+    </linearGradient>
+    <linearGradient id="ridgeFront" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151d"/>
+      <stop offset="1" stop-color="#0b0e14"/>
+    </linearGradient>
+    <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#cfd6e2" stop-opacity="0"/>
+      <stop offset="0.55" stop-color="#cfd6e2" stop-opacity="0.13"/>
+      <stop offset="1" stop-color="#cfd6e2" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <filter id="softer" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <pattern id="grain" width="160" height="160" patternUnits="userSpaceOnUse">
+      <rect width="160" height="160" fill="none"/>
+      <circle cx="23" cy="41" r="0.9" fill="#fff" opacity="0.05"/>
+      <circle cx="88" cy="17" r="0.7" fill="#fff" opacity="0.04"/>
+      <circle cx="131" cy="73" r="1" fill="#fff" opacity="0.05"/>
+      <circle cx="57" cy="103" r="0.8" fill="#fff" opacity="0.04"/>
+      <circle cx="147" cy="129" r="0.6" fill="#fff" opacity="0.05"/>
+      <circle cx="19" cy="139" r="0.7" fill="#fff" opacity="0.04"/>
+    </pattern>
+  </defs>
+
+  <rect width="1920" height="900" fill="url(#night)"/>
+
+  <!-- 星子 -->
+  <g fill="#f4efe3">
+    <circle cx="240" cy="120" r="1.7" opacity="0.7"/>
+    <circle cx="430" cy="78" r="1.2" opacity="0.5"/>
+    <circle cx="610" cy="150" r="1.5" opacity="0.6"/>
+    <circle cx="780" cy="96" r="1" opacity="0.45"/>
+    <circle cx="980" cy="60" r="1.6" opacity="0.55"/>
+    <circle cx="1180" cy="130" r="1.1" opacity="0.4"/>
+    <circle cx="330" cy="240" r="1" opacity="0.35"/>
+    <circle cx="700" cy="300" r="1.2" opacity="0.3"/>
+  </g>
+
+  <!-- 月 -->
+  <circle cx="1470" cy="220" r="330" fill="url(#moonHalo)"/>
+  <circle cx="1470" cy="220" r="96" fill="#f8f1de"/>
+  <circle cx="1448" cy="204" r="86" fill="#1b2130" opacity="0.55"/>
+  <circle cx="1456" cy="212" r="86" fill="#202737" opacity="0.28"/>
+
+  <!-- 流云 -->
+  <g filter="url(#softer)" opacity="0.5">
+    <ellipse cx="480" cy="300" rx="300" ry="26" fill="#8e97ad"/>
+    <ellipse cx="1180" cy="356" rx="360" ry="22" fill="#8e97ad"/>
+    <ellipse cx="860" cy="410" rx="420" ry="18" fill="#a2a9bd" opacity="0.7"/>
+  </g>
+
+  <!-- 远山 -->
+  <path d="M0 620 L150 520 L300 590 L470 480 L640 570 L820 500 L1010 585 L1200 505 L1390 585 L1580 520 L1760 590 L1920 545 L1920 900 L0 900 Z"
+        fill="url(#ridgeBack)" filter="url(#soft)"/>
+  <path d="M0 700 L200 610 L380 690 L580 590 L760 680 L960 600 L1160 685 L1360 605 L1560 690 L1760 620 L1920 680 L1920 900 L0 900 Z"
+        fill="url(#ridgeMid)" opacity="0.95"/>
+  <!-- 山岚 -->
+  <rect x="0" y="600" width="1920" height="150" fill="url(#mist)"/>
+  <!-- 近山 -->
+  <path d="M0 780 L240 700 L470 790 L700 720 L930 800 L1170 730 L1400 810 L1640 745 L1920 800 L1920 900 L0 900 Z"
+        fill="url(#ridgeFront)"/>
+
+  <!-- 山脊古亭 -->
+  <g fill="#0e1219" opacity="0.96">
+    <path d="M1082 640 l58 0 l0 6 l-58 0 z"/>
+    <path d="M1106 646 l10 0 l0 40 l-10 0 z"/>
+    <path d="M1074 640 l46 -22 l46 22 z"/>
+    <path d="M1092 618 l56 0 l0 4 l-56 0 z"/>
+    <path d="M1105 596 l30 0 l0 4 l-30 0 z"/>
+    <path d="M1112 600 l4 0 l0 20 l-4 0 z"/>
+    <path d="M1124 600 l4 0 l0 20 l-4 0 z"/>
+  </g>
+
+  <!-- 左上垂樱 -->
+  <g fill="#0d1119" opacity="0.9">
+    <path d="M-20 30 C120 70 210 150 260 260 C270 285 240 300 220 280 C170 200 90 130 -20 96 Z"/>
+    <path d="M40 40 C150 90 220 180 250 270" stroke="#0d1119" stroke-width="5" fill="none"/>
+  </g>
+  <g fill="#f0b9c6" opacity="0.92">
+    <circle cx="196" cy="196" r="9"/>
+    <circle cx="214" cy="222" r="7"/>
+    <circle cx="176" cy="232" r="8"/>
+    <circle cx="236" cy="258" r="6.5"/>
+    <circle cx="160" cy="266" r="7"/>
+    <circle cx="204" cy="286" r="6"/>
+    <circle cx="252" cy="286" r="5"/>
+    <circle cx="130" cy="150" r="6"/>
+    <circle cx="112" cy="186" r="5.5"/>
+    <circle cx="86" cy="140" r="5"/>
+    <circle cx="152" cy="112" r="4.5"/>
+  </g>
+  <g fill="#f7d3db" opacity="0.55">
+    <circle cx="196" cy="196" r="4"/>
+    <circle cx="176" cy="232" r="3.6"/>
+    <circle cx="160" cy="266" r="3"/>
+  </g>
+
+  <!-- 飘落花瓣 -->
+  <g fill="#f2c3ce" opacity="0.8">
+    <ellipse cx="380" cy="330" rx="8" ry="4.6" transform="rotate(-22 380 330)"/>
+    <ellipse cx="560" cy="430" rx="6.5" ry="3.8" transform="rotate(28 560 430)" opacity="0.65"/>
+    <ellipse cx="720" cy="270" rx="5.5" ry="3.2" transform="rotate(-40 720 270)" opacity="0.55"/>
+    <ellipse cx="900" cy="470" rx="7" ry="4" transform="rotate(14 900 470)" opacity="0.5"/>
+    <ellipse cx="1080" cy="330" rx="6" ry="3.4" transform="rotate(36 1080 330)" opacity="0.45"/>
+    <ellipse cx="1260" cy="500" rx="5" ry="2.9" transform="rotate(-18 1260 500)" opacity="0.4"/>
+    <ellipse cx="300" cy="520" rx="5.5" ry="3.1" transform="rotate(22 300 520)" opacity="0.38"/>
+  </g>
+
+  <!-- 宣纸肌理 -->
+  <rect width="1920" height="900" fill="url(#grain)"/>
+</svg>

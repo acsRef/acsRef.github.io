@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice" role="img" aria-label="竹影与灯">
+  <defs>
+    <linearGradient id="c2bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#1a1f29"/>
+      <stop offset="0.55" stop-color="#242b38"/>
+      <stop offset="1" stop-color="#3a3140"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f6d9a0" stop-opacity="0.75"/>
+      <stop offset="0.4" stop-color="#e8b06a" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#e8b06a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="moon2" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7efdc" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#f7efdc" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur2"><feGaussianBlur stdDeviation="6"/></filter>
+  </defs>
+
+  <rect width="800" height="520" fill="url(#c2bg)"/>
+  <circle cx="620" cy="120" r="130" fill="url(#moon2)"/>
+  <circle cx="620" cy="120" r="42" fill="#f4ecd8" opacity="0.92"/>
+
+  <!-- 竹 -->
+  <g stroke="#0e1319" stroke-linecap="round" opacity="0.92">
+    <path d="M92 520 C96 400 88 300 104 150" stroke-width="9" fill="none"/>
+    <path d="M150 520 C156 420 148 330 160 210" stroke-width="6" fill="none"/>
+    <path d="M215 520 C218 440 210 360 224 280" stroke-width="5" fill="none"/>
+  </g>
+  <g stroke="#131a22" stroke-width="3" fill="none" opacity="0.9">
+    <path d="M104 300 C140 286 176 292 214 272"/>
+    <path d="M104 300 C136 320 168 322 200 318"/>
+    <path d="M160 330 C196 316 232 322 268 302"/>
+    <path d="M160 330 C192 350 224 352 256 348"/>
+    <path d="M104 210 C140 196 172 202 206 184"/>
+    <path d="M160 250 C196 236 232 242 266 224"/>
+    <path d="M224 350 C256 336 292 342 324 322" stroke-width="2.4"/>
+  </g>
+  <g fill="#1a222b" opacity="0.85">
+    <ellipse cx="222" cy="266" rx="16" ry="6" transform="rotate(-24 222 266)"/>
+    <ellipse cx="262" cy="302" rx="14" ry="5.5" transform="rotate(-16 262 302)"/>
+    <ellipse cx="208" cy="318" rx="13" ry="5" transform="rotate(14 208 318)"/>
+    <ellipse cx="216" cy="180" rx="13" ry="5" transform="rotate(-22 216 180)"/>
+  </g>
+
+  <!-- 灯笼 -->
+  <g>
+    <circle cx="560" cy="352" r="150" fill="url(#lamp)"/>
+    <path d="M560 250 l0 -34" stroke="#0f141b" stroke-width="3"/>
+    <rect x="528" y="248" width="64" height="8" rx="3" fill="#0f141b"/>
+    <ellipse cx="560" cy="330" rx="46" ry="54" fill="#d9663f" opacity="0.92"/>
+    <ellipse cx="560" cy="330" rx="46" ry="54" fill="none" stroke="#f2c98f" stroke-opacity="0.45" stroke-width="1.5"/>
+    <path d="M514 330 H606" stroke="#f2c98f" stroke-opacity="0.28" stroke-width="1.4"/>
+    <path d="M560 384 l0 26" stroke="#0f141b" stroke-width="3"/>
+    <path d="M545 410 h30" stroke="#c8452f" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- 地面雾 -->
+  <ellipse cx="400" cy="512" rx="460" ry="60" fill="#cfd6e2" opacity="0.07" filter="url(#blur2)"/>
+
+  <!-- 落樱 -->
+  <g fill="#efbcc8" opacity="0.55">
+    <ellipse cx="330" cy="170" rx="6" ry="3.4" transform="rotate(-28 330 170)"/>
+    <ellipse cx="420" cy="240" rx="5" ry="2.8" transform="rotate(20 420 240)"/>
+    <ellipse cx="700" cy="300" rx="5.5" ry="3.1" transform="rotate(-14 700 300)"/>
+    <ellipse cx="250" cy="410" rx="4.6" ry="2.6" transform="rotate(32 250 410)"/>
+  </g>
+
+  <!-- 朱印 -->
+  <g opacity="0.9">
+    <rect x="712" y="432" width="46" height="46" rx="3" fill="#b03a2e"/>
+    <rect x="717" y="437" width="36" height="36" rx="1.5" fill="none" stroke="#fdf6ea" stroke-opacity="0.6" stroke-width="1.2"/>
+    <text x="735" y="463" font-family="'LXGW WenKai','KaiTi',serif" font-size="20" fill="#fdf6ea" text-anchor="middle">星</text>
+  </g>
+</svg>

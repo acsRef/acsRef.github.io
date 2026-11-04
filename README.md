@@ -1,6 +1,6 @@
 # 星屑ノート
 
-acsRef 的个人博客：Hexo + Butterfly（二次元风格），托管在 GitHub Pages，由 GitHub Actions 自动构建。
+acsRef 的个人博客：Hexo + Butterfly（国风 × 二次元：宣纸、墨、朱砂），带一只 Live2D 看板娘，托管在 GitHub Pages，由 GitHub Actions 自动构建。
 
 - 线上地址：<https://acsref.github.io>
 - 源码仓库：<https://github.com/acsRef/acsRef.github.io>
@@ -90,9 +90,11 @@ npx hexo new "文章标题"
 │   ├── _posts/                    # 文章（Markdown）
 │   ├── about/                     # 关于页
 │   ├── tags/  categories/         # 标签页、分类页
-│   ├── css/anime.css              # 自定义二次元样式
-│   ├── js/sakura.js               # 樱花瓣飘落
-│   └── img/                       # 头像、横幅等图片
+│   ├── css/anime.css              # 自定义国风样式（宣纸/墨/朱砂）
+│   ├── js/sakura.js               # 落樱
+│   ├── js/live2d.js               # 看板娘初始化
+│   ├── live2d/                    # Live2D 组件与模型（本地，不对外网依赖）
+│   └── img/                       # 头像、横幅、封面、印章等 SVG
 └── public/                        # 构建产物（不提交）
 ```
 
@@ -105,6 +107,8 @@ npx hexo new "文章标题"
 | 主题色、背景渐变 | `_config.butterfly.yml` 的 `theme_color` 和 `background` |
 | 卡片圆角、阴影、字号 | `source/css/anime.css` |
 | 花瓣数量 / 速度 | `source/js/sakura.js` |
+| 看板娘的出场位置 / 大小 | `source/js/live2d.js` 里的 `display` |
+| 换看板娘模型 | 把模型放进 `source/live2d/models/`，改 `jsonPath` |
 | 暗色模式开关 | `_config.butterfly.yml` 的 `darkmode`（当前关闭，原因见注释） |
 | 部署工作流 | `.github/workflows/deploy.yml` |
 

@@ -20,7 +20,8 @@ comments: false
 | 项目 | 用的是 |
 |---|---|
 | 生成器 | Hexo |
-| 主题 | Butterfly（改成了二次元风格） |
+| 主题 | Butterfly（改成了国风 × 二次元：宣纸、墨、朱砂） |
+| 看板娘 | Live2D（本地打包，不依赖外网） |
 | 托管 | GitHub Pages |
 | 构建 | GitHub Actions |
 
