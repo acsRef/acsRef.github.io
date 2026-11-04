@@ -102,10 +102,15 @@ subtitle:
 
 # ---------------- 动效 ----------------
 enter_transitions: true
+
+# 这版是浅色的「月光+樱花」设计，暗色模式下玻璃卡片会显得突兀，
+# 所以先关掉暗色模式。以后想开：把 enable 改成 true，
+# 再在 source/css/anime.css 里补一组 [data-theme="dark"] 的配色即可。
 darkmode:
-  enable: true
-  button: true
-  autoChangeMode: 1  # 跟随系统，系统不支持时 18:00-06:00 自动切暗色
+  enable: false
+  button: false
+  autoChangeMode: false
+
 display_mode: light
 rightside_scroll_percent: true
 

@@ -105,6 +105,7 @@ npx hexo new "文章标题"
 | 主题色、背景渐变 | `_config.butterfly.yml` 的 `theme_color` 和 `background` |
 | 卡片圆角、阴影、字号 | `source/css/anime.css` |
 | 花瓣数量 / 速度 | `source/js/sakura.js` |
+| 暗色模式开关 | `_config.butterfly.yml` 的 `darkmode`（当前关闭，原因见注释） |
 | 部署工作流 | `.github/workflows/deploy.yml` |
 
 ## 图片放哪
