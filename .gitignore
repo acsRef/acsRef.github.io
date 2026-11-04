@@ -1,0 +1,18 @@
+# 依赖与构建产物，不进仓库
+node_modules/
+public/
+.deploy_git/
+.npm-cache/
+
+# Hexo 运行时生成
+db.json
+*.log
+
+# 系统 / 编辑器
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 本地环境变量
+.env

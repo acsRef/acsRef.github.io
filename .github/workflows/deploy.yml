@@ -1,0 +1,58 @@
+name: 构建并发布到 GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # 也可以在 Actions 页面手动点一次
+
+# 允许工作流向 Pages 发布、拿 OIDC token
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个发布，新的推送排队而不是互相打断
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取仓库
+        uses: actions/checkout@v4
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 如果 Pages 还没开启，尝试自动开启
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 生成静态文件
+        run: npx hexo generate
+
+      - name: 上传 public 目录
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 发布
+        id: deployment
+        uses: actions/deploy-pages@v4

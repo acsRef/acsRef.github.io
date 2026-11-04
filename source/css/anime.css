@@ -1,0 +1,208 @@
+/* ===========================================================
+   星屑ノート · 二次元风格自定义样式
+   覆盖 Butterfly 主题的若干外观，不改动主题源码，
+   所以以后升级主题（npm update）不会丢失这里的修改。
+   =========================================================== */
+
+:root {
+  --anime-pink: #ff6fa5;
+  --anime-pink-soft: #ffd3e6;
+  --anime-purple: #7d5ba6;
+  --anime-ink: #3f3550;
+  --anime-glass: rgba(255, 255, 255, 0.78);
+  --anime-shadow: 0 12px 32px rgba(125, 91, 166, 0.12);
+}
+
+/* ---------- 基础排版 ---------- */
+body {
+  color: var(--anime-ink);
+  letter-spacing: 0.02em;
+}
+
+#article-container {
+  line-height: 1.9;
+}
+
+/* 正文标题：左侧小圆点 + 渐变下划线 */
+#article-container h2,
+#article-container h3 {
+  padding-left: 14px;
+  border-left: 4px solid var(--anime-pink);
+  border-radius: 2px;
+}
+
+#article-container h2::after {
+  content: '';
+  display: block;
+  width: 72px;
+  height: 3px;
+  margin-top: 10px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--anime-pink), var(--anime-purple), transparent);
+}
+
+/* ---------- 玻璃质感卡片 ---------- */
+#recent-posts > .recent-post-item,
+#aside-content .card-widget,
+#post,
+#page,
+#archive,
+#tag,
+#category {
+  border-radius: 18px !important;
+  background: var(--anime-glass) !important;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--anime-shadow) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(1.08);
+  backdrop-filter: blur(10px) saturate(1.08);
+}
+
+/* 文章卡片悬停时轻轻上浮 */
+#recent-posts > .recent-post-item {
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+#recent-posts > .recent-post-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(125, 91, 166, 0.2) !important;
+}
+
+/* ---------- 导航栏 ---------- */
+#page-header nav#nav {
+  background: rgba(255, 255, 255, 0.55) !important;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+#page-header.nav-fixed #nav {
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: 0 2px 16px rgba(125, 91, 166, 0.1);
+}
+
+#site-title {
+  background: linear-gradient(120deg, var(--anime-pink), var(--anime-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---------- 头像：粉色光环 ---------- */
+#aside-content .card-info .avatar-img img,
+.avatar-img img {
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 4px rgba(255, 111, 165, 0.22), 0 8px 20px rgba(125, 91, 166, 0.25);
+}
+
+/* ---------- 正文细节 ---------- */
+#article-container blockquote {
+  border-left: 4px solid var(--anime-pink);
+  border-radius: 0 12px 12px 0;
+  background: rgba(255, 183, 213, 0.14);
+  color: #6a5b7d;
+}
+
+#article-container img {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(125, 91, 166, 0.16);
+}
+
+#article-container a {
+  color: var(--anime-purple);
+  border-bottom: 1px dashed rgba(125, 91, 166, 0.45);
+}
+
+#article-container a:hover {
+  color: var(--anime-pink);
+  border-bottom-color: var(--anime-pink);
+}
+
+/* 代码块 */
+figure.highlight,
+#article-container pre {
+  border-radius: 12px !important;
+}
+
+/* 标签胶囊 */
+#aside-content .card-tag-cloud a,
+.tag-cloud a {
+  border-radius: 999px !important;
+}
+
+/* 按钮 */
+#rightside > div > button,
+#rightside > div > a,
+.button--animated {
+  border-radius: 999px;
+}
+
+/* 选中文字的颜色 */
+::selection {
+  background: var(--anime-pink-soft);
+  color: #4a2b3f;
+}
+
+/* ---------- 页脚 ---------- */
+#footer {
+  background: transparent !important;
+}
+
+#footer-wrap {
+  color: var(--anime-purple);
+}
+
+/* ---------- 樱花瓣 ---------- */
+.sakura-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sakura-petal {
+  position: absolute;
+  top: -8vh;
+  width: 10px;
+  height: 10px;
+  border-radius: 100% 0 100% 0;
+  background: linear-gradient(135deg, #ffe3f0 0%, #ff9ecd 60%, #f27fb4 100%);
+  opacity: 0.65;
+  animation-name: sakura-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes sakura-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(var(--drift, 40px), 112vh, 0) rotate(680deg);
+  }
+}
+
+/* 尊重系统的「减少动态效果」设置 */
+@media (prefers-reduced-motion: reduce) {
+  .sakura-layer {
+    display: none;
+  }
+
+  #recent-posts > .recent-post-item,
+  #recent-posts > .recent-post-item:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* 手机上减少花瓣数量由 JS 控制，这里顺便把阴影收一点 */
+@media (max-width: 768px) {
+  #recent-posts > .recent-post-item,
+  #aside-content .card-widget,
+  #post,
+  #page {
+    border-radius: 14px !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

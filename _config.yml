@@ -1,0 +1,93 @@
+# Hexo 站点配置
+# 官方文档：https://hexo.io/docs/configuration
+
+# ---------------- 站点信息 ----------------
+title: 星屑ノート
+subtitle: '把代码、番剧和日常，写成散落的星屑'
+description: 'acsRef 的个人博客 —— 二次元 × 代码 × 生活记录'
+keywords: 博客,动漫,二次元,前端,Python,Hexo
+author: acsRef
+language: zh-CN
+timezone: 'Asia/Shanghai'
+
+# ---------------- 网址 ----------------
+# 这是你的用户名站点，地址固定为 https://<用户名>.github.io
+url: https://acsref.github.io
+root: /
+permalink: posts/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: true
+  trailing_html: true
+
+# ---------------- 目录 ----------------
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# ---------------- 写作 ----------------
+new_post_name: :year-:month-:day-:title.md
+default_layout: post
+titlecase: false
+external_link:
+  enable: true
+  field: site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+syntax_highlighter: highlight.js
+highlight:
+  line_number: true
+  auto_detect: false
+  tab_replace: ''
+  wrap: true
+  hljs: false
+prismjs:
+  preprocess: true
+  line_number: true
+  tab_replace: ''
+
+# ---------------- 首页 / 分页 ----------------
+index_generator:
+  path: ''
+  per_page: 8
+  order_by: -date
+
+default_category: 未分类
+category_map:
+tag_map:
+
+# ---------------- 日期格式 ----------------
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+updated_option: 'mtime'
+
+# ---------------- 分页 ----------------
+per_page: 8
+pagination_dir: page
+
+# ---------------- 本地搜索 ----------------
+# 配合主题的 local_search 使用，生成 public/search.xml
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
+  limit: 10000
+
+# ---------------- 主题 ----------------
+theme: butterfly
+
+# ---------------- 部署 ----------------
+# 本博客用 GitHub Actions 构建发布，所以这里留空。
+# 如果以后想在本地一条命令部署，再看 README 里的「本地部署」一节。
+deploy:
+  type: ''
