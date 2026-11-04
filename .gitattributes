@@ -1,6 +1,9 @@
 # 统一换行符，避免 Windows/Linux 来回切换时整文件 diff
 * text=auto eol=lf
 
+# Live2D 的模型与运行时是二进制/特殊格式，禁止任何换行转换
+source/live2d/** -text
+
 *.png binary
 *.jpg binary
 *.jpeg binary
