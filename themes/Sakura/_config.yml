@@ -35,14 +35,20 @@ menus:
 homePageSortType: -1
 homeArticleShown: 10
 
-# 首屏背景图：用站点自带的国风插画
+# 首屏背景图：Sakura 主题的经典壁纸集（同 dragonbaby308 那个 demo 站）
+# 每次刷新会随机挑一张；想换成自己的图，把路径改成 /img/xxx.jpg 即可
 bg:
-  - /img/hero-ink.svg
-  - /img/cover-bamboo.svg
-  - /img/cover-window.svg
+  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(1).jpg.webp
+  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(2).jpg.webp
+  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(3).jpg.webp
+  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(4).jpg.webp
+  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(5).jpg.webp
+  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(6).jpg.webp
+  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(7).jpg.webp
+  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(8).jpg.webp
 
 # 背景样式：filter-dim 阴影 / filter-grid 横条 / filter-dot 点点
-bgclass: filter-dim
+bgclass: filter-dot
 
 # 首屏下方的入口卡片（留空则不显示）
 startdash: []

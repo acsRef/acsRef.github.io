@@ -8,7 +8,7 @@ categories:
   - 站点
 description: 这个博客的第一篇文章，顺便说说它是怎么跑起来的。
 photos:
-  - /img/hero-ink.svg
+  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(1).jpg.webp
 ---
 
 欢迎来到 **星屑ノート** ✨
