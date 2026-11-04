@@ -35,17 +35,15 @@ menus:
 homePageSortType: -1
 homeArticleShown: 10
 
-# 首屏背景图：Sakura 主题的经典壁纸集（同 dragonbaby308 那个 demo 站）
-# 每次刷新会随机挑一张；想换成自己的图，把路径改成 /img/xxx.jpg 即可
+# 首屏背景图：取自 https://dragonbaby308.github.io/ 那站点的壁纸
+# （在他的 DragonBaby308/cdn 仓库 img/bg/ 下，经 jsdelivr 分发）
+# 每次刷新随机挑一张；想换成自己的图，改成 /img/xxx.jpg 放 source/img/ 里即可
 bg:
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(1).jpg.webp
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(2).jpg.webp
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(3).jpg.webp
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(4).jpg.webp
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(5).jpg.webp
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(6).jpg.webp
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(7).jpg.webp
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(8).jpg.webp
+  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/sakura.jpg
+  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg2.jpg
+  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg3.jpg
+  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg4.jpg
+  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg1.jpg
 
 # 背景样式：filter-dim 阴影 / filter-grid 横条 / filter-dot 点点
 bgclass: filter-dot
