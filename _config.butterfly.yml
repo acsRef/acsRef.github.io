@@ -206,7 +206,7 @@ inject:
     - <link rel="stylesheet" href="/css/anime.css">
   bottom:
     - <script src="/js/sakura.js" defer></script>
-    # 看板娘：本地打包的 Live2D，按顺序加载（先核心再外壳，最后初始化）
-    - <script src="/live2d/lib/L2Dwidget.0.min.js"></script>
+    # 看板娘：只引主包。L2Dwidget.min.js 会自己用 jsonp 去拉同目录的 L2Dwidget.0.min.js，
+    # 手动引那个分包会因为 webpackJsonpL2Dwidget 还没定义而报错。
     - <script src="/live2d/lib/L2Dwidget.min.js"></script>
     - <script src="/js/live2d.js" defer></script>
