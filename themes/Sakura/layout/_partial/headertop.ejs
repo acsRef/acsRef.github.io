@@ -5,7 +5,7 @@
     <div class="focusinfo no-select">
       <div class="header-tou">
         <a href="<%- theme.url%>">
-          <img src="<%- (theme.cdn || '') + theme.avatar %>">
+          <img src="<%- (theme.cdn || '') + theme.avatar %>" onerror="this.onerror=null;this.src='/img/avatar.svg'">
         </a>
       </div>
       <div class="header-info">

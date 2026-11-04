@@ -11,12 +11,12 @@
       <%- post.title %></h1>
       <p class="entry-census">
         <span>
-          <a href="<%- post.authorLink%>">
-            <img src="<%- post.avatar%>">
+          <a href="<%- post.authorLink || theme.url %>">
+            <img src="<%- post.avatar || theme.avatar %>" onerror="this.onerror=null;this.src='/img/avatar.svg'">
           </a>
         </span>
         <span>
-          <a href="<%- post.authorLink%>"><%- post.author %></a>
+          <a href="<%- post.authorLink || theme.url %>"><%- post.author || theme.siteName %></a>
         </span>
         <span class="bull">
         ·</span>
@@ -112,11 +112,14 @@
       <%- partial('_partial/comment') %>
       <section class="author-profile">
         <div class="info" itemprop="author" itemscope="" itemtype="https://schema.org/Person">
-          <a href="<%- post.authorLink %>" class="profile gravatar"><img src="<%- post.avatar%>" itemprop="image" alt="<%- post.author %>" height="70" width="70"></a>
+          <% var _author = post.author || theme.siteName; %>
+          <% var _authorLink = post.authorLink || theme.url; %>
+          <% var _avatar = post.avatar || theme.avatar; %>
+          <a href="<%- _authorLink %>" class="profile gravatar"><img src="<%- _avatar %>" onerror="this.onerror=null;this.src='/img/avatar.svg'" itemprop="image" alt="<%- _author %>" height="70" width="70"></a>
           <div class="meta">
             <span class="title">Author</span>
             <h3 itemprop="name">
-            <a href="<%- post.authorLink%>" itemprop="url" rel="author"><%- post.author %></a>
+            <a href="<%- _authorLink %>" itemprop="url" rel="author"><%- _author %></a>
             </h3>
           </div>
         </div>
