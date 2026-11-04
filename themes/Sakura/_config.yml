@@ -35,15 +35,19 @@ menus:
 homePageSortType: -1
 homeArticleShown: 10
 
-# 首屏背景图：取自 https://dragonbaby308.github.io/ 那站点的壁纸
-# （在他的 DragonBaby308/cdn 仓库 img/bg/ 下，经 jsdelivr 分发）
-# 每次刷新随机挑一张；想换成自己的图，改成 /img/xxx.jpg 放 source/img/ 里即可
+# 首屏背景图：dragonbaby308 站点的壁纸（源在他的 DragonBaby308/cdn 仓库 img/bg/）
+#
+# 为什么不直接写 jsdelivr 地址：国内访问 cdn.jsdelivr.net 经常超时/被墙，
+# 而且 bg1.jpg 原图有 4MB。
+# 这里改成走 wsrv.nl 图片代理：由它去取原图、顺便缩到 1920 宽 + 质量 80，
+# 浏览器实际只下载 200KB 左右的 JPEG，既绕开了 jsdelivr，也快得多。
+# 想彻底不依赖任何外链：把图片放进 source/img/bg/，这里改成 /img/bg/xxx.jpg。
 bg:
-  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/sakura.jpg
-  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg2.jpg
-  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg3.jpg
-  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg4.jpg
-  - https://cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg1.jpg
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/sakura.jpg&w=1920&output=jpg&q=80'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg2.jpg&w=1920&output=jpg&q=80'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg3.jpg&w=1920&output=jpg&q=80'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg4.jpg&w=1920&output=jpg&q=80'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg1.jpg&w=1920&output=jpg&q=80'
 
 # 背景样式：filter-dim 阴影 / filter-grid 横条 / filter-dot 点点
 bgclass: filter-dot

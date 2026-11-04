@@ -8,7 +8,7 @@ categories:
   - 随想
 description: 一点关于配色、留白和「看得下去」的碎碎念。
 photos:
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(6).jpg.webp
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg4.jpg&w=1200&output=jpg&q=80'
 ---
 
 技术博客的默认长相，大概都是白底、灰字、一条分割线。它不难看，但也不太让人想多待一会儿。

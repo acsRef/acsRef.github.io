@@ -8,7 +8,7 @@ categories:
   - 站点
 description: 这个博客的第一篇文章，顺便说说它是怎么跑起来的。
 photos:
-  - https://cdn.jsdelivr.net/gh/honjun/cdn@1.6/img/cover/(1).jpg.webp
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/sakura.jpg&w=1200&output=jpg&q=80'
 ---
 
 欢迎来到 **星屑ノート** ✨
