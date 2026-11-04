@@ -8,6 +8,11 @@ public/
 db.json
 *.log
 
+# 草稿：只留在本地，永不提交、永不发布
+# 用法：npx hexo new draft "标题"  → 生成在 source/_drafts/
+# 想发布时把文件移到 source/_posts/ 再 push
+source/_drafts/
+
 # 系统 / 编辑器
 .DS_Store
 Thumbs.db
