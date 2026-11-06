@@ -1,0 +1,123 @@
+/* ===========================================================
+   自定义样式（覆盖主题缺陷 / 个人偏好）
+   通过 head.ejs 里的 <link> 引入，排在主题 style.css 之后
+   =========================================================== */
+
+/* -----------------------------------------------------------
+   代码块
+   主题的 .highlight-wrap 用了深底 #21252b + color:#000，
+   但它只给 .hljs 类写了浅色文字，而 Hexo 输出的是 figure.highlight
+   结构，没有 .hljs，于是变成黑底黑字。这里按 Hexo 的实际类名重写。
+   ----------------------------------------------------------- */
+
+.highlight-wrap,
+figure.highlight {
+  background: #1e222a !important;
+  color: #d5d9e0 !important;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.highlight-wrap pre,
+.highlight-wrap code,
+.highlight-wrap .line,
+figure.highlight pre,
+figure.highlight code,
+figure.highlight .line {
+  background: transparent !important;
+  color: #d5d9e0 !important;
+  font-family: 'JetBrains Mono', Consolas, Menlo, 'Courier New', monospace !important;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+/* 左侧行号：压暗一点，不抢正文 */
+.highlight-wrap .gutter,
+.highlight-wrap .gutter pre,
+.highlight-wrap .line-number,
+figure.highlight .gutter,
+figure.highlight .gutter pre {
+  color: #5a6372 !important;
+  background: transparent !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding-right: 10px;
+}
+
+/* ---- 语法着色（Hexo / Highlight.js 的类名） ---- */
+.highlight-wrap .comment,
+.highlight-wrap .quote,
+figure.highlight .comment,
+figure.highlight .quote { color: #6b7480 !important; font-style: italic; }
+
+.highlight-wrap .keyword,
+.highlight-wrap .selector-tag,
+.highlight-wrap .doctag,
+figure.highlight .keyword,
+figure.highlight .selector-tag { color: #c678dd !important; }
+
+.highlight-wrap .string,
+.highlight-wrap .regexp,
+.highlight-wrap .addition,
+.highlight-wrap .attribute,
+figure.highlight .string,
+figure.highlight .regexp,
+figure.highlight .addition { color: #98c379 !important; }
+
+.highlight-wrap .number,
+.highlight-wrap .literal,
+figure.highlight .number,
+figure.highlight .literal { color: #d19a66 !important; }
+
+.highlight-wrap .title,
+.highlight-wrap .section,
+.highlight-wrap .name,
+.highlight-wrap .function,
+figure.highlight .title,
+figure.highlight .section,
+figure.highlight .name { color: #61afef !important; }
+
+.highlight-wrap .built_in,
+.highlight-wrap .type,
+figure.highlight .built_in,
+figure.highlight .type { color: #56b6c2 !important; }
+
+.highlight-wrap .attr,
+.highlight-wrap .variable,
+.highlight-wrap .template-variable,
+.highlight-wrap .params,
+figure.highlight .attr,
+figure.highlight .variable,
+figure.highlight .template-variable { color: #e5c07b !important; }
+
+.highlight-wrap .meta,
+.highlight-wrap .symbol,
+.highlight-wrap .bullet,
+figure.highlight .meta,
+figure.highlight .symbol,
+figure.highlight .bullet { color: #7f848e !important; }
+
+.highlight-wrap .deletion,
+figure.highlight .deletion { color: #e06c75 !important; }
+
+/* 代码块右上角的语言标签 / 复制按钮，保持可读 */
+.highlight-wrap:after,
+figure.highlight:after { color: #7f848e; }
+
+/* 代码区横向滚动条 */
+.highlight-wrap::-webkit-scrollbar { height: 8px; }
+.highlight-wrap::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+}
+
+/* -----------------------------------------------------------
+   行内代码：主题默认是淡黄底，稍微清一点
+   ----------------------------------------------------------- */
+.entry-content code:not([class*='language-']),
+#article-container code:not([class*='language-']) {
+  background: rgba(0, 0, 0, 0.055);
+  color: #b03a2e;
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 0.92em;
+}
