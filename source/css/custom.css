@@ -4,18 +4,43 @@
    =========================================================== */
 
 /* -----------------------------------------------------------
-   代码块
-   主题的 .highlight-wrap 用了深底 #21252b + color:#000，
-   但它只给 .hljs 类写了浅色文字，而 Hexo 输出的是 figure.highlight
-   结构，没有 .hljs，于是变成黑底黑字。这里按 Hexo 的实际类名重写。
+   代码块：普通 Markdown 风格
+   - 浅色背景 + 细边框，不要主题那套假 macOS 窗口（红黄绿圆点、阴影）
+   - 不要行号列
+   - 语法着色用浅色主题的柔和配色
    ----------------------------------------------------------- */
 
 .highlight-wrap,
 figure.highlight {
-  background: #1e222a !important;
-  color: #d5d9e0 !important;
-  border-radius: 6px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  position: relative;
+  background: #f8f5ef !important;
+  border: 1px solid #e5dccb !important;
+  border-radius: 4px !important;
+  padding: 14px 16px !important;
+  margin: 1.2em 0 !important;
+  box-shadow: none !important;
+  overflow-x: auto;
+}
+
+/* 干掉主题画的假窗口装饰：红黄绿圆点、语言标签、右边的小按钮 */
+.highlight-wrap::before,
+.highlight-wrap::after,
+figure.highlight::before,
+figure.highlight::after,
+.highlight-wrap code[data-rel]::before,
+figure.highlight code[data-rel]::before {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+/* 行号列整体隐藏 */
+.highlight-wrap .gutter,
+.highlight-wrap .line-number,
+figure.highlight .gutter,
+figure.highlight .line-number {
+  display: none !important;
 }
 
 .highlight-wrap pre,
@@ -25,61 +50,61 @@ figure.highlight pre,
 figure.highlight code,
 figure.highlight .line {
   background: transparent !important;
-  color: #d5d9e0 !important;
+  color: #3a3733 !important;
   font-family: 'JetBrains Mono', Consolas, Menlo, 'Courier New', monospace !important;
   font-size: 13.5px;
-  line-height: 1.7;
+  line-height: 1.75;
+  white-space: pre;
 }
 
-/* 左侧行号：压暗一点，不抢正文 */
-.highlight-wrap .gutter,
-.highlight-wrap .gutter pre,
-.highlight-wrap .line-number,
-figure.highlight .gutter,
-figure.highlight .gutter pre {
-  color: #5a6372 !important;
-  background: transparent !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  padding-right: 10px;
+.highlight-wrap table,
+figure.highlight table {
+  border: 0 !important;
+  margin: 0 !important;
+  width: auto !important;
 }
 
-/* ---- 语法着色（Hexo / Highlight.js 的类名） ---- */
+.highlight-wrap td,
+figure.highlight td {
+  border: 0 !important;
+  padding: 0 !important;
+}
+
+/* ---- 语法着色（浅色） ---- */
 .highlight-wrap .comment,
 .highlight-wrap .quote,
 figure.highlight .comment,
-figure.highlight .quote { color: #6b7480 !important; font-style: italic; }
+figure.highlight .quote { color: #a8a093 !important; font-style: italic; }
 
 .highlight-wrap .keyword,
 .highlight-wrap .selector-tag,
 .highlight-wrap .doctag,
 figure.highlight .keyword,
-figure.highlight .selector-tag { color: #c678dd !important; }
+figure.highlight .selector-tag { color: #a626a4 !important; }
 
 .highlight-wrap .string,
 .highlight-wrap .regexp,
 .highlight-wrap .addition,
-.highlight-wrap .attribute,
 figure.highlight .string,
 figure.highlight .regexp,
-figure.highlight .addition { color: #98c379 !important; }
+figure.highlight .addition { color: #4f8f4a !important; }
 
 .highlight-wrap .number,
 .highlight-wrap .literal,
 figure.highlight .number,
-figure.highlight .literal { color: #d19a66 !important; }
+figure.highlight .literal { color: #b76b28 !important; }
 
 .highlight-wrap .title,
 .highlight-wrap .section,
 .highlight-wrap .name,
-.highlight-wrap .function,
 figure.highlight .title,
 figure.highlight .section,
-figure.highlight .name { color: #61afef !important; }
+figure.highlight .name { color: #36648b !important; }
 
 .highlight-wrap .built_in,
 .highlight-wrap .type,
 figure.highlight .built_in,
-figure.highlight .type { color: #56b6c2 !important; }
+figure.highlight .type { color: #2f7d78 !important; }
 
 .highlight-wrap .attr,
 .highlight-wrap .variable,
@@ -87,37 +112,34 @@ figure.highlight .type { color: #56b6c2 !important; }
 .highlight-wrap .params,
 figure.highlight .attr,
 figure.highlight .variable,
-figure.highlight .template-variable { color: #e5c07b !important; }
+figure.highlight .template-variable { color: #986f24 !important; }
 
 .highlight-wrap .meta,
 .highlight-wrap .symbol,
 .highlight-wrap .bullet,
 figure.highlight .meta,
 figure.highlight .symbol,
-figure.highlight .bullet { color: #7f848e !important; }
+figure.highlight .bullet { color: #8c8478 !important; }
 
 .highlight-wrap .deletion,
-figure.highlight .deletion { color: #e06c75 !important; }
+figure.highlight .deletion { color: #b03a2e !important; }
 
-/* 代码块右上角的语言标签 / 复制按钮，保持可读 */
-.highlight-wrap:after,
-figure.highlight:after { color: #7f848e; }
-
-/* 代码区横向滚动条 */
+/* 代码块内部滚动条 */
 .highlight-wrap::-webkit-scrollbar { height: 8px; }
 .highlight-wrap::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(35, 32, 28, 0.18);
   border-radius: 4px;
 }
 
 /* -----------------------------------------------------------
-   行内代码：主题默认是淡黄底，稍微清一点
+   行内代码
    ----------------------------------------------------------- */
 .entry-content code:not([class*='language-']),
 #article-container code:not([class*='language-']) {
-  background: rgba(0, 0, 0, 0.055);
-  color: #b03a2e;
+  background: rgba(35, 32, 28, 0.06);
+  color: #a8452f;
   border-radius: 3px;
   padding: 1px 5px;
   font-size: 0.92em;
+  border: none;
 }
