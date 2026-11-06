@@ -84,15 +84,36 @@ npx hexo new "文章标题"
 
 ```markdown
 ---
-title: 只有特定的人能看
+title: 随记
 date: 2026-11-05 09:00:00
+description: 一些不想公开的东西
 password: 734869
 ---
 ```
 
-没写 `password` 的文章照常公开。配置在根目录 `_config.yml` 的 `blog_encrypt` 里（提示语、猜错密码的文案）。
+没写 `password` 的文章照常公开。提示语在根目录 `_config.yml` 的 `encrypt` 里（v4 的配置项就叫 `encrypt`，不是 `blog_encrypt`）。
+
+**密码要输几次？** 只在这台设备上输一次。配置里开了：
+
+- `autoSave: true` —— 解密密钥缓存在浏览器 localStorage（键名 `hbe.v4.<页面路径>`），刷新、再次打开都不用重输
+- `stableSalt: true` —— 让 salt 由 permalink 派生；GitHub Actions 每次部署都是全新构建，不开这个的话每次发布后缓存都会失效
+
+所以：**同一浏览器 + 同一篇文章 = 输一次就够**。换设备、换浏览器、清缓存才需要重输。每篇文章各自独立缓存。
+
+**连标题也不想露？** 标题和摘要写在 front-matter 里，是公开的（首页列表能看到）。做法是标题本身写含糊，真实标题放进正文第一行（正文是加密的）：
+
+```markdown
+---
+title: 某日
+description: （加密）
+password: 734869
+---
+
+## 真实的标题写在这里，只有输对密码才看得见
+```
 
 ⚠️ 注意：页面本身是公开的，内容以密文形式下发，**不是真安全**——密码太弱会被离线爆破。别把真正敏感的东西放上来。
+另外 localStorage 里的密钥，同源的其它脚本（统计、评论等）理论上能读到，只在信任站点里所有脚本时才开 `autoSave`。
 
 ## 不想公开的草稿
 

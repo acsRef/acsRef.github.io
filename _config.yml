@@ -113,15 +113,31 @@ feed:
   path: atom.xml
   limit: 20
 
-# ---------------- 文章加密（hexo-blog-encrypt） ----------------
+# ---------------- 文章加密（hexo-blog-encrypt v4） ----------------
 # 用法：在想加密的文章 front-matter 里加一行 password: 你的密码
 # 没有 password 的文章照常公开。
-# 注意：内容是以 AES 密文形式输出的，页面本身公开，弱密码可能被离线爆破，
+# 注意：内容以 AES 密文输出，页面本身公开，弱密码可能被离线爆破，
 # 真正敏感的东西不要放公网。
-blog_encrypt:
-  enable: true
+#
+# 注意配置项叫 encrypt（v4 已不再使用 blog_encrypt）
+encrypt:
   abstract: 这篇文章已加密，输入密码后查看。
   message: 请输入访问密码
   theme: default
   wrong_pass_message: 密码不对，再试一次。
-  wrong_hash_message: 校验失败，请检查密码是否正确。
+
+  # 把派生出的密钥缓存进浏览器 localStorage（键名 hbe.v4.<页面路径>）
+  # 效果：同一台设备、同一篇文章，输过一次密码后刷新/再访问都不用再输。
+  autoSave: true
+
+  # 让 salt 由 permalink 派生。GitHub Actions 每次都是全新构建，
+  # 不开启的话每次部署生成的 salt 都会变，缓存就会失效、又要重新输密码。
+  stableSalt: true
+
+  # PBKDF2 迭代次数，越高越难被暴力破解，但打开也越慢
+  kdf:
+    iterations: 250000
+
+  decryptButton:
+    show: true
+    text: 解密
