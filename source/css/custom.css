@@ -131,6 +131,34 @@ figure.highlight .deletion { color: #b03a2e !important; }
   border-radius: 4px;
 }
 
+/* 主题 JS 会给内层 <pre> 也加上 .highlight-wrap 类，
+   这里把它重置掉，避免「边框套边框」 */
+figure.highlight pre.highlight-wrap,
+figure.highlight .highlight-wrap,
+.entry-content pre.highlight-wrap {
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+/* 主题的「拷贝代码」图标原本是白色（配深底），浅底上要改成深色 */
+.entry-content pre.highlight-wrap .copy-code,
+figure.highlight .copy-code {
+  color: #8c8478 !important;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.entry-content pre.highlight-wrap .copy-code:hover,
+figure.highlight .copy-code:hover {
+  opacity: 1;
+  color: #b03a2e !important;
+}
+
 /* -----------------------------------------------------------
    行内代码
    ----------------------------------------------------------- */

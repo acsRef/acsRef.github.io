@@ -272,11 +272,10 @@ function code_highlight_style () {
   for (var i = 0; i < $('article pre').length; i++) {
     gen_top_bar(i)
   }
-  $('pre').on('click', function (e) {
-    if (e.target !== this) return
-    $(this).toggleClass('code-block-fullscreen')
-    $('html').toggleClass('code-block-fullscreen-html-scroll')
-  })
+  // 原本这里给 pre 绑了「点击全屏」：
+  //   $('pre').on('click', ... toggleClass('code-block-fullscreen'))
+  // 点一下代码块（含右上角的语言标签）就会整段铺开盖住页面，和本站样式冲突，
+  // 已移除，点代码块不再有任何反应。
   hljs.initLineNumbersOnLoad()
 }
 try {
