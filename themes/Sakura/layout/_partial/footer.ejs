@@ -42,10 +42,11 @@
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script> -->
 <script type="text/javascript">
 /* <![CDATA[ */
+/* 视频背景已移除：movies.live 一律设为 close，避免 JS 去加载视频、卡在「正在载入视频…」 */
 if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
-  var Poi = {"pjax":"<%- theme.pjax %>","movies":{"url": "<%- theme.movies.url %>","name":"<%- theme.movies.name%>","live":"close"},"windowheight":"fixed","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+  var Poi = {"pjax":"<%- theme.pjax %>","movies":{"url": "","name":"","live":"close"},"windowheight":"fixed","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
 } else {
-  var Poi = {"pjax":"<%- theme.pjax %>","movies":{"url": "<%- theme.movies.url %>","name":"<%- theme.movies.name%>","live":"open"},"windowheight":"auto","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
+  var Poi = {"pjax":"<%- theme.pjax %>","movies":{"url": "","name":"","live":"close"},"windowheight":"auto","codelamp":"close","ajaxurl":"","order":"asc","formpostion":"bottom"};
 }
 /* ]]> */
 
