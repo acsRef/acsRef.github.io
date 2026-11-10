@@ -9,6 +9,8 @@ tags:
 categories:
   - Agent Runtime
 description: '四层记忆、一道准入闸、一次被数据否掉的设计。为什么不用余弦相似度自动合并记忆：因为相反说法的相似度和同义说法完全重叠。'
+photos:
+  - '/img/cover-window.svg'
 ---
 
 ## 记忆的难点不是"存"，是"算不算数"

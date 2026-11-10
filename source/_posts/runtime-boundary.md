@@ -9,6 +9,8 @@ tags:
 categories:
   - 架构笔记
 description: 'RAGent（检索运行时）与 ReportAgent（Agent 运行时）为什么是两个项目，中间那条 MCP 边界是怎么画的，以及踩过的坑。'
+photos:
+  - '/img/cover-window.svg'
 ---
 
 ## 为什么不是一个大项目

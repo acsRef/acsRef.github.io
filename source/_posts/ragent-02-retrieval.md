@@ -10,6 +10,8 @@ tags:
 categories:
   - RAG Runtime
 description: '三路召回 + RRF + 跨编码器重排 + MMR；然后 8 组消融证明：在真实语料上，5 个高级检索策略的召回增益是 0。'
+photos:
+  - '/img/hero-ink.svg'
 ---
 
 ## 链路长什么样

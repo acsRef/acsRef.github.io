@@ -10,6 +10,8 @@ tags:
 categories:
   - 面试
 description: '从 Agent 面试题库里挑 12 道最能拉开差距的题，每题给「开口版回答 + 项目里的真实证据 + 追问怎么接」。答案里的数字都可以在我另外两个项目系列里找到出处。'
+photos:
+  - '/img/cover-bamboo.svg'
 ---
 
 ## 这份题库怎么用
