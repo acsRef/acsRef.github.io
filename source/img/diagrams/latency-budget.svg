@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" width="880" height="430" role="img" aria-label="单轮报表请求的延迟预算瀑布图">
+  <defs>
+    <style>
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;fill:#26323c}
+      .tb{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;font-weight:600;fill:#1d2b36}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10.5px;fill:#6b7a88}
+      .axis{stroke:#c9d2da;stroke-width:1}
+      .grid{stroke:#eef2f5;stroke-width:1}
+    </style>
+  </defs>
+
+  <text class="tb" x="20" y="26">一次报表请求的 38.6 秒花在哪（p50，串行累加）</text>
+  <text class="s" x="20" y="44">条形从 0 开始累加；括号里是「这一步之前已经过去多少秒」</text>
+
+  <!-- axis: 0..40s mapped to x 210..850 -->
+  <!-- gridlines every 5s -->
+  <g>
+    <line class="grid" x1="210" y1="70" x2="210" y2="366"/>
+    <line class="grid" x1="290" y1="70" x2="290" y2="366"/>
+    <line class="grid" x1="370" y1="70" x2="370" y2="366"/>
+    <line class="grid" x1="450" y1="70" x2="450" y2="366"/>
+    <line class="grid" x1="530" y1="70" x2="530" y2="366"/>
+    <line class="grid" x1="610" y1="70" x2="610" y2="366"/>
+    <line class="grid" x1="690" y1="70" x2="690" y2="366"/>
+    <line class="grid" x1="770" y1="70" x2="770" y2="366"/>
+    <line class="grid" x1="850" y1="70" x2="850" y2="366"/>
+  </g>
+  <line class="axis" x1="210" y1="366" x2="850" y2="366"/>
+  <g class="s">
+    <text x="204" y="384" text-anchor="end">0s</text>
+    <text x="290" y="384" text-anchor="middle">5s</text>
+    <text x="370" y="384" text-anchor="middle">10s</text>
+    <text x="450" y="384" text-anchor="middle">15s</text>
+    <text x="530" y="384" text-anchor="middle">20s</text>
+    <text x="610" y="384" text-anchor="middle">25s</text>
+    <text x="690" y="384" text-anchor="middle">30s</text>
+    <text x="770" y="384" text-anchor="middle">35s</text>
+    <text x="850" y="384" text-anchor="middle">40s</text>
+  </g>
+
+  <!-- bars: each row y = 76 + i*48, height 26 -->
+  <!-- 意图分类 2.4s: 0 -> 2.4 => 210 -> 210+2.4*16=248 -->
+  <g>
+    <text class="t" x="20" y="94">意图分类 2.4s（36% 轮次）</text>
+    <rect x="210" y="76" width="38" height="26" rx="3" fill="#9b8ec4"/>
+    <text class="s" x="256" y="94">0 → 2.4s</text>
+
+    <text class="t" x="20" y="142">需求理解 9.3s</text>
+    <rect x="248" y="124" width="149" height="26" rx="3" fill="#d4a373"/>
+    <text class="s" x="405" y="142">2.4 → 11.7s</text>
+
+    <text class="t" x="20" y="190">SQL 计划 7.0s</text>
+    <rect x="397" y="172" width="112" height="26" rx="3" fill="#7ba7d4"/>
+    <text class="s" x="517" y="190">11.7 → 18.7s</text>
+
+    <text class="t" x="20" y="238">SQL 生成 7.7s</text>
+    <rect x="509" y="220" width="123" height="26" rx="3" fill="#7ba7d4"/>
+    <text class="s" x="640" y="238">18.7 → 26.4s</text>
+
+    <text class="t" x="20" y="286">报告规划 6.4s</text>
+    <rect x="632" y="268" width="102" height="26" rx="3" fill="#8fb996"/>
+    <text class="s" x="742" y="286">26.4 → 32.8s</text>
+
+    <text class="t" x="20" y="334">报告组装 5.8s</text>
+    <rect x="734" y="316" width="93" height="26" rx="3" fill="#8fb996"/>
+    <text class="s" x="835" y="334">→ 38.6s</text>
+  </g>
+
+  <g>
+    <rect x="20" y="396" width="10" height="10" rx="2" fill="#9b8ec4"/>
+    <text class="s" x="36" y="405">意图（可省）</text>
+    <rect x="130" y="396" width="10" height="10" rx="2" fill="#d4a373"/>
+    <text class="s" x="146" y="405">需求（可省一次）</text>
+    <rect x="262" y="396" width="10" height="10" rx="2" fill="#7ba7d4"/>
+    <text class="s" x="278" y="405">SQL 两段（可合并）</text>
+    <rect x="410" y="396" width="10" height="10" rx="2" fill="#8fb996"/>
+    <text class="s" x="426" y="405">报告两段</text>
+    <text class="s" x="560" y="405">六步全是串行 —— 这才是延迟的大头，不是「模型慢」</text>
+  </g>
+</svg>
