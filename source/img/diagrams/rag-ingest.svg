@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" width="880" height="400" role="img" aria-label="RAGent 文档摄入管线">
+  <defs>
+    <marker id="in-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7a"/>
+    </marker>
+    <style>
+      .b{fill:#f4f8fd;stroke:#7ba7d4;stroke-width:1.4}
+      .g{fill:#fdfdfc;stroke:#c9d2da;stroke-width:1.4}
+      .y{fill:#fdf9ef;stroke:#d9b46a;stroke-width:1.4}
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:12px;fill:#26323c}
+      .tb{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;font-weight:600;fill:#1d2b36}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10.5px;fill:#6b7a88}
+      .ln{stroke:#5b6b7a;stroke-width:1.4;fill:none}
+    </style>
+  </defs>
+
+  <text class="tb" x="20" y="26">摄入管线：从原始文档到可检索索引</text>
+  <text class="s" x="20" y="44">每一步都能被单独重跑；失败不丢块，hash 未变的块复用旧 embedding</text>
+
+  <!-- row 1 -->
+  <rect class="b" x="20" y="68" width="150" height="76" rx="9"/>
+  <text class="tb" x="34" y="90">① 解析 Parser</text>
+  <text class="t" x="34" y="110">PDF/DOCX/PPTX/XLSX</text>
+  <text class="t" x="34" y="128">HTML/MD/图片</text>
+
+  <rect class="b" x="196" y="68" width="150" height="76" rx="9"/>
+  <text class="tb" x="210" y="90">② 清洗 + 结构化</text>
+  <text class="t" x="210" y="110">表格识别 is_atomic</text>
+  <text class="t" x="210" y="128">代码/图整体不拆</text>
+
+  <rect class="b" x="372" y="68" width="160" height="76" rx="9"/>
+  <text class="tb" x="386" y="90">③ 语义切分</text>
+  <text class="t" x="386" y="110">按 H3/H2 层级切</text>
+  <text class="t" x="386" y="128">超限装箱 + 64 字重叠</text>
+
+  <rect class="b" x="558" y="68" width="146" height="76" rx="9"/>
+  <text class="tb" x="572" y="90">④ 元数据</text>
+  <text class="t" x="572" y="110">LLM 批量 25/批</text>
+  <text class="t" x="572" y="128">失败重试 + 降级不丢</text>
+
+  <rect class="b" x="730" y="68" width="130" height="76" rx="9"/>
+  <text class="tb" x="744" y="90">⑤ 索引</text>
+  <text class="t" x="744" y="110">双表示落库</text>
+  <text class="t" x="744" y="128">代际标记 v3</text>
+
+  <line class="ln" x1="170" y1="106" x2="194" y2="106" marker-end="url(#in-arrow)"/>
+  <line class="ln" x1="346" y1="106" x2="370" y2="106" marker-end="url(#in-arrow)"/>
+  <line class="ln" x1="532" y1="106" x2="556" y2="106" marker-end="url(#in-arrow)"/>
+  <line class="ln" x1="704" y1="106" x2="728" y2="106" marker-end="url(#in-arrow)"/>
+
+  <!-- annotation: dual representation -->
+  <rect class="y" x="196" y="176" width="512" height="96" rx="9"/>
+  <text class="tb" x="212" y="198">表格双表示：一份给生成，一份给检索</text>
+  <text class="t" x="212" y="220">chunks.text（原始 Markdown） → 喂给模型做生成，保留列头与版式</text>
+  <text class="t" x="212" y="240">retrieval_text（逐行归一化） → 「2023年 营收 1000 亿元」这种自包含句，专供 embedding</text>
+  <text class="s" x="212" y="260">原因：表格被切碎后「列-值对应关系」会丢，只切不改写时召回的是孤立数字</text>
+  <line class="ln" x1="452" y1="144" x2="452" y2="174" marker-end="url(#in-arrow)"/>
+
+  <!-- bottom notes -->
+  <rect class="g" x="20" y="292" width="392" height="92" rx="9"/>
+  <text class="tb" x="36" y="314">增量更新：内容 hash 复用</text>
+  <text class="t" x="36" y="336">未变更的 chunk 直接复用 embedding 与 LLM 元数据</text>
+  <text class="t" x="36" y="356">embedding 部分失败时保留旧索引，可重试而非全量重建</text>
+  <text class="s" x="36" y="374">工具：tools/index_integrity_report.py 硬断言文档数/chunk 数/问题覆盖率</text>
+
+  <rect class="g" x="436" y="292" width="424" height="92" rx="9"/>
+  <text class="tb" x="452" y="314">候选问题通道（摄入期生成）</text>
+  <text class="t" x="452" y="336">每个 chunk 用 LLM 生成「这段能回答什么问题」→ 独立 embedding</text>
+  <text class="t" x="452" y="356">查询期作为第三路召回，RRF 权重 0.15（防治噪声压倒主通道）</text>
+  <text class="s" x="452" y="374">默认开启，env 可关；关掉后召回率下降但延迟略降</text>
+</svg>

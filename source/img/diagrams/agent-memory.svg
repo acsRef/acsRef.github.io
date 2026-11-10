@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440" width="880" height="440" role="img" aria-label="ReportAgent 记忆分层与写入时机">
+  <defs>
+    <marker id="mm-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7a"/>
+    </marker>
+    <style>
+      .m{fill:#f7f5fb;stroke:#9b8ec4;stroke-width:1.4}
+      .g{fill:#fdfdfc;stroke:#c9d2da;stroke-width:1.4}
+      .y{fill:#fdf9ef;stroke:#d9b46a;stroke-width:1.4}
+      .b{fill:#f4f8fd;stroke:#7ba7d4;stroke-width:1.4}
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;fill:#26323c}
+      .tb{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;font-weight:600;fill:#1d2b36}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10.5px;fill:#6b7a88}
+      .ln{stroke:#5b6b7a;stroke-width:1.4;fill:none}
+    </style>
+  </defs>
+
+  <text class="tb" x="20" y="26">记忆四层：四个存储，四种生命周期，一条准入闸</text>
+  <text class="s" x="20" y="44">关键不是「存起来」，而是「什么话配进哪个库、多久、算不算数」</text>
+
+  <!-- write side -->
+  <rect class="y" x="20" y="66" width="200" height="150" rx="9"/>
+  <text class="tb" x="34" y="88">写入侧准入闸（确定性）</text>
+  <text class="t" x="34" y="110">闸 1 范围：</text>
+  <text class="s" x="34" y="128">「以后/默认」→ 长期，无期限</text>
+  <text class="s" x="34" y="146">「这次/先」→ 会话，24h TTL</text>
+  <text class="s" x="34" y="164">没有标记 → 候选队列</text>
+  <text class="t" x="34" y="188">闸 2 反例：</text>
+  <text class="s" x="34" y="206">任务参数 / 指示引用 / 问句 / 太短 → 不记</text>
+
+  <line class="ln" x1="220" y1="140" x2="248" y2="140" marker-end="url(#mm-arrow)"/>
+
+  <!-- four stores -->
+  <rect class="m" x="252" y="66" width="286" height="72" rx="9"/>
+  <text class="tb" x="266" y="88">① memory.long_term_memory</text>
+  <text class="t" x="266" y="108">唯一键 (user_id, memory_key)；memory_key 是意图槽位</text>
+  <text class="s" x="266" y="126">pref:chart / pref:granularity / fact:&lt;指纹&gt; —— 冲突写法 UPSERT 覆盖</text>
+
+  <rect class="m" x="252" y="152" width="286" height="64" rx="9"/>
+  <text class="tb" x="266" y="174">② memory.semantic_entry（工作区）</text>
+  <text class="t" x="266" y="194">候选队列 + 会话级 TTL；证据 ≥3 才晋级</text>
+  <text class="s" x="266" y="210">confidence 封顶 medium，high 只留给用户明说</text>
+
+  <rect class="g" x="560" y="66" width="300" height="72" rx="9"/>
+  <text class="tb" x="574" y="88">③ memory.query_template</text>
+  <text class="t" x="574" y="108">成功 SQL + 向量；只做参考帧，不当事实</text>
+  <text class="s" x="574" y="126">VECTOR(1536)，按热度（LFU/LRU）在档内打破平局</text>
+
+  <rect class="g" x="560" y="152" width="300" height="64" rx="9"/>
+  <text class="tb" x="574" y="174">④ app.conversations（追加式转录）</text>
+  <text class="t" x="574" y="194">多轮上下文真源，只追加不改写</text>
+  <text class="s" x="574" y="210">历史消息不删，压缩只影响「给模型看的那一段」</text>
+
+  <!-- read side -->
+  <rect class="b" x="20" y="248" width="840" height="86" rx="9"/>
+  <text class="tb" x="34" y="270">读取侧：Recall Before Agent，四触发条件 + 分档排序</text>
+  <text class="t" x="34" y="292">排序键 = (档位, 辅助分)：档位宽 0.05 ≈ 0.083 相似度 —— 先比可信度，再比热度</text>
+  <text class="t" x="34" y="312">实测：R@1 0.840 / R@3 0.960 / MRR 0.900 / Clean 1.000（25 记忆 × 30 金标查询）</text>
+  <text class="s" x="34" y="328">退化测试：热度权重会让 R@3 从 96% 掉到 56%（10 条被挤掉）→ 改档位后回到 92%</text>
+
+  <!-- offline -->
+  <rect class="y" x="20" y="356" width="840" height="68" rx="9"/>
+  <text class="tb" x="34" y="378">离线整合（每日一次，CLI 跑批，不在热路径）</text>
+  <text class="t" x="34" y="400">过期清理 → 同维度收敛（结构优先判定：极性 → 数字 → 原子冲突 → 灰区进 merge_candidate 待复审）→ 证据晋级</text>
+  <text class="s" x="34" y="416">为什么不用余弦自动合并：真 embedding 上「相反说法」相似度 0.906–0.962，与「同义」0.695–0.933 完全重叠</text>
+</svg>

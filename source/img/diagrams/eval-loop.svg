@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" width="880" height="430" role="img" aria-label="执行准确率闭环与子任务诊断">
+  <defs>
+    <marker id="ev-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7a"/>
+    </marker>
+    <style>
+      .b{fill:#f4f8fd;stroke:#7ba7d4;stroke-width:1.4}
+      .g{fill:#fdfdfc;stroke:#c9d2da;stroke-width:1.4}
+      .r{fill:#fdf2f2;stroke:#d99a9a;stroke-width:1.4}
+      .y{fill:#fdf9ef;stroke:#d9b46a;stroke-width:1.4}
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;fill:#26323c}
+      .tb{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;font-weight:600;fill:#1d2b36}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10.5px;fill:#6b7a88}
+      .ln{stroke:#5b6b7a;stroke-width:1.4;fill:none}
+    </style>
+  </defs>
+
+  <text class="tb" x="20" y="26">两层指标：跑通率会骗人，结果准确率才是判据</text>
+  <text class="s" x="20" y="44">同一条 case，sql_success_rate=1.0 而 execution_accuracy=0.0 —— 指标选错等于自欺</text>
+
+  <!-- layer 1 -->
+  <rect class="g" x="20" y="66" width="256" height="104" rx="9"/>
+  <text class="tb" x="34" y="88">① sql_success_rate（旧头号指标）</text>
+  <text class="t" x="34" y="110">执行成功 + 有行 = 通过</text>
+  <text class="t" x="34" y="130">20 条基线全绿，其中 19 条没断言「结果对不对」</text>
+  <text class="r" x="34" y="146" width="0" height="0"/>
+  <text class="s" x="34" y="156">它衡量 execution success，不衡量 accuracy</text>
+
+  <rect class="b" x="292" y="66" width="270" height="104" rx="9"/>
+  <text class="tb" x="306" y="88">② execution_accuracy（新判据）</text>
+  <text class="t" x="306" y="110">金标用 SQL 表达，评测时现跑（跟种子数据走）</text>
+  <text class="t" x="306" y="130">行按多重集比、数值 Decimal 容差、NULL≠空串≠0</text>
+  <text class="s" x="306" y="156">默认只比值不比别名，但列数必须一致</text>
+
+  <rect class="b" x="578" y="66" width="282" height="104" rx="9"/>
+  <text class="tb" x="592" y="88">③ 复杂度分档（从金标结构推导）</text>
+  <text class="t" x="592" y="110">T1 单表 / T2 星型 join / T3 预聚合·多口径·明细</text>
+  <text class="t" x="592" y="130">按档看准确率，才知道「难的那档还行不行」</text>
+  <text class="s" x="592" y="156">本轮：T2 9/9、T3 1/1 —— n=1 只能当结构，不能当结论</text>
+
+  <line class="ln" x1="276" y1="118" x2="290" y2="118" marker-end="url(#ev-arrow)"/>
+  <line class="ln" x1="562" y1="118" x2="576" y2="118" marker-end="url(#ev-arrow)"/>
+
+  <!-- diagnosis -->
+  <rect class="y" x="20" y="196" width="420" height="120" rx="9"/>
+  <text class="tb" x="34" y="218">④ 子任务诊断：结果不一致时，差在哪一步</text>
+  <text class="t" x="34" y="240">把金标 SQL 与实测 SQL 都解析成结构件，逐项比覆盖率：</text>
+  <text class="t" x="34" y="260">tables → join_keys → columns → predicates → structure</text>
+  <text class="t" x="34" y="282">代价：三处假阳性（CTE 间 join / uses_cte / 只收顶层谓词）</text>
+  <text class="s" x="34" y="302">原则：结果一致时的结构差异是合法替代写法，不计入失败归因</text>
+
+  <rect class="r" x="460" y="196" width="400" height="120" rx="9"/>
+  <text class="tb" x="474" y="218">第一次跑就抓到真 bug，但归因是错的</text>
+  <text class="t" x="474" y="240">现象：金标 6 行 / 实测 6 行，数值差 3.4 倍</text>
+  <text class="t" x="474" y="260">我的第一判断：1:N join 扇出 —— 错的</text>
+  <text class="t" x="474" y="282">复核：每单支付条数恒为 1；数据是 2023–2026 四年</text>
+  <text class="s" x="474" y="302">真因：需求层丢年份 + 口径被字符串排序挤出候选（4年 / 1年 × 毛净差）</text>
+
+  <line class="ln" x1="440" y1="256" x2="458" y2="256" marker-end="url(#ev-arrow)"/>
+
+  <!-- bottom: loop -->
+  <rect class="g" x="20" y="334" width="840" height="74" rx="9"/>
+  <text class="tb" x="34" y="356">闭环：金标 1 条 → 10 条，每加一条都抓出真缺陷</text>
+  <text class="t" x="34" y="378">首轮 15/20（准确率 0.8）→ 修多轮继承 + 多口径 → 18/20 → 补 scope 兜底 → 20/20（准确率 1.0）</text>
+  <text class="s" x="34" y="396">收敛后回归：1768 + 491 测试全绿；产物里逐条落 sql / golden_sql / tier / diagnosis，结果可自证</text>
+</svg>

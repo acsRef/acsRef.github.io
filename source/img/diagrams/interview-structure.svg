@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 380" width="860" height="380" role="img" aria-label="面试回答的结构：从题库五段式到四段式落地">
+  <defs>
+    <marker id="iv-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7a"/>
+    </marker>
+    <style>
+      .g{fill:#fdfdfc;stroke:#c9d2da;stroke-width:1.4}
+      .b{fill:#f4f8fd;stroke:#7ba7d4;stroke-width:1.4}
+      .a{fill:#fdf7f2;stroke:#d4a373;stroke-width:1.4}
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;fill:#26323c}
+      .tb{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;font-weight:600;fill:#1d2b36}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10.5px;fill:#6b7a88}
+      .ln{stroke:#5b6b7a;stroke-width:1.4;fill:none}
+    </style>
+  </defs>
+
+  <text class="tb" x="20" y="26">一道题的四段式：题库给骨架，项目给血肉</text>
+  <text class="s" x="20" y="44">面试官听的不是"你知道什么"，而是"你做过什么、为此放弃了什么"</text>
+
+  <rect class="b" x="20" y="66" width="190" height="120" rx="9"/>
+  <text class="tb" x="34" y="88">① 开口版（20 秒）</text>
+  <text class="t" x="34" y="110">一句判断 + 一条分界线</text>
+  <text class="t" x="34" y="130">先给结论，别铺垫</text>
+  <text class="s" x="34" y="156">例：区别不在用没用 LLM，</text>
+  <text class="s" x="34" y="172">在决策权在谁手里</text>
+
+  <rect class="a" x="232" y="66" width="240" height="120" rx="9"/>
+  <text class="tb" x="246" y="88">② 项目证据（60 秒）</text>
+  <text class="t" x="246" y="110">一个具体结构 + 一到两个数字</text>
+  <text class="t" x="246" y="130">数字必须能被追问</text>
+  <text class="s" x="246" y="156">例：1768 测试 / 执行准确率 0→10/10</text>
+  <text class="s" x="246" y="172">/ hit@10=1.000 / R@3=0.960</text>
+
+  <rect class="a" x="494" y="66" width="240" height="120" rx="9"/>
+  <text class="tb" x="508" y="88">③ 一次失败（30 秒）</text>
+  <text class="t" x="508" y="110">踩过什么坑 + 怎么发现的</text>
+  <text class="t" x="508" y="130">这是"真做过"的唯一硬证据</text>
+  <text class="s" x="508" y="156">例：3.4 倍偏差我先判成 join 扇出，</text>
+  <text class="s" x="508" y="172">查真库发现数据是四年</text>
+
+  <rect class="g" x="756" y="66" width="84" height="120" rx="9"/>
+  <text class="tb" x="768" y="88">④ 追问</text>
+  <text class="t" x="768" y="110">主动交边界</text>
+  <text class="s" x="768" y="134">"这块我没做"</text>
+  <text class="s" x="768" y="152">比硬答</text>
+  <text class="s" x="768" y="168">更值钱</text>
+
+  <line class="ln" x1="210" y1="126" x2="230" y2="126" marker-end="url(#iv-arrow)"/>
+  <line class="ln" x1="472" y1="126" x2="492" y2="126" marker-end="url(#iv-arrow)"/>
+  <line class="ln" x1="734" y1="126" x2="754" y2="126" marker-end="url(#iv-arrow)"/>
+
+  <rect class="g" x="20" y="214" width="400" height="140" rx="9"/>
+  <text class="tb" x="34" y="236">反信号（题库自己也列了）</text>
+  <text class="t" x="34" y="258">· "我们用 LangChain 搭了个 Agent"，再问就空</text>
+  <text class="t" x="34" y="278">· 只讲功能清单，讲不出取舍和代价</text>
+  <text class="t" x="34" y="298">· 所有场景都说能做，没有边界</text>
+  <text class="t" x="34" y="318">· 数字全是约数："大概快了一倍"</text>
+  <text class="s" x="34" y="342">共同点：无法被追问。真做过的人最不怕追问细节。</text>
+
+  <rect class="a" x="440" y="214" width="400" height="140" rx="9"/>
+  <text class="tb" x="454" y="236">面试前自检六问</text>
+  <text class="t" x="454" y="258">1. 哪一步是模型决定的？ 2. 失败路径留了什么证据？</text>
+  <text class="t" x="454" y="278">3. 有没有一个"换了就变差"的数字？</text>
+  <text class="t" x="454" y="298">4. 砍掉过什么，为什么？ 5. 边界在哪（规模/并发/成本）？</text>
+  <text class="t" x="454" y="318">6. 重做一次会改哪三个决定？</text>
+  <text class="s" x="454" y="342">六问答不满，说明项目还没"想透"，不是"没做完"。</text>
+</svg>

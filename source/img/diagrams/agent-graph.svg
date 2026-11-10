@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" width="880" height="470" role="img" aria-label="ReportAgent 需求图与执行图">
+  <defs>
+    <marker id="ag-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7a"/>
+    </marker>
+    <style>
+      .a{fill:#fdf7f2;stroke:#d4a373;stroke-width:1.4}
+      .g{fill:#fdfdfc;stroke:#c9d2da;stroke-width:1.4}
+      .r{fill:#fdf2f2;stroke:#d99a9a;stroke-width:1.4}
+      .m{fill:#f7f5fb;stroke:#9b8ec4;stroke-width:1.4}
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;fill:#26323c}
+      .tb{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;font-weight:600;fill:#1d2b36}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10.5px;fill:#6b7a88}
+      .ln{stroke:#5b6b7a;stroke-width:1.4;fill:none}
+      .dash{stroke:#9b8ec4;stroke-width:1.4;stroke-dasharray:5 4;fill:none}
+    </style>
+  </defs>
+
+  <text class="tb" x="20" y="26">两张图：需求图产出「卡片」，执行图产出「数据」</text>
+  <text class="s" x="20" y="44">卡片是唯一执行契约；用户确认之前不花一次 SQL 成本</text>
+
+  <!-- stage 1 -->
+  <rect class="m" x="20" y="64" width="176" height="84" rx="9"/>
+  <text class="tb" x="34" y="86">① 安全闸</text>
+  <text class="t" x="34" y="106">注入打分 ≥3 拦截</text>
+  <text class="t" x="34" y="124">SSE SECURITY_REJECTED</text>
+  <text class="s" x="34" y="142">拦截不产生报告</text>
+
+  <rect class="a" x="220" y="64" width="190" height="84" rx="9"/>
+  <text class="tb" x="234" y="86">② 意图 + Schema</text>
+  <text class="t" x="234" y="106">关键词 → 字典 → LLM 兜底</text>
+  <text class="t" x="234" y="124">MCP 检索表结构</text>
+  <text class="s" x="234" y="142">1427 轮里 64% 不调模型</text>
+
+  <rect class="a" x="434" y="64" width="220" height="84" rx="9"/>
+  <text class="tb" x="448" y="86">③ 理解 + 确定性归并</text>
+  <text class="t" x="448" y="106">TurnPlan → reduce_task</text>
+  <text class="t" x="448" y="124">回填：时间/范围/口径</text>
+  <text class="s" x="448" y="142">模型漏抽的字面事实由代码补</text>
+
+  <rect class="a" x="678" y="64" width="182" height="84" rx="9"/>
+  <text class="tb" x="692" y="86">④ 可报告性裁决</text>
+  <text class="t" x="692" y="106">READY / 需澄清 / 不支持</text>
+  <text class="t" x="692" y="124">产出需求卡 + 待确认项</text>
+  <text class="s" x="692" y="142">口径缺省→给默认不问</text>
+
+  <line class="ln" x1="196" y1="106" x2="218" y2="106" marker-end="url(#ag-arrow)"/>
+  <line class="ln" x1="410" y1="106" x2="432" y2="106" marker-end="url(#ag-arrow)"/>
+  <line class="ln" x1="654" y1="106" x2="676" y2="106" marker-end="url(#ag-arrow)"/>
+
+  <!-- confirmation -->
+  <rect class="g" x="310" y="176" width="260" height="56" rx="9"/>
+  <text class="tb" x="324" y="198">⑤ 用户确认（POST /confirm）</text>
+  <text class="t" x="324" y="218">卡片可改 → 锁定草稿 → 才进入执行</text>
+  <line class="ln" x1="769" y1="148" x2="520" y2="174" marker-end="url(#ag-arrow)"/>
+
+  <!-- execution loop -->
+  <rect class="a" x="20" y="258" width="132" height="66" rx="9"/>
+  <text class="tb" x="34" y="280">SQL 计划</text>
+  <text class="t" x="34" y="300">指标口径来自</text>
+  <text class="s" x="34" y="316">metrics.yaml 注册表</text>
+
+  <rect class="a" x="168" y="258" width="132" height="66" rx="9"/>
+  <text class="tb" x="182" y="280">生成 SQL</text>
+  <text class="t" x="182" y="300">卡片 → prompt</text>
+  <text class="s" x="182" y="316">禁止臆造列名</text>
+
+  <rect class="g" x="316" y="258" width="150" height="66" rx="9"/>
+  <text class="tb" x="330" y="280">六道校验闸</text>
+  <text class="t" x="330" y="300">只读/AST/函数/白名单</text>
+  <text class="s" x="330" y="316">+ EXPLAIN 真库试跑</text>
+
+  <rect class="g" x="482" y="258" width="132" height="66" rx="9"/>
+  <text class="tb" x="496" y="280">执行</text>
+  <text class="t" x="496" y="300">只读角色</text>
+  <text class="s" x="496" y="316">statement_timeout</text>
+
+  <rect class="g" x="630" y="258" width="150" height="66" rx="9"/>
+  <text class="tb" x="644" y="280">评估三态</text>
+  <text class="t" x="644" y="300">SUCCESS/EMPTY/FAILED</text>
+  <text class="s" x="644" y="316">三态全部落库</text>
+
+  <line class="ln" x1="440" y1="232" x2="90" y2="256" marker-end="url(#ag-arrow)"/>
+  <line class="ln" x1="152" y1="291" x2="166" y2="291" marker-end="url(#ag-arrow)"/>
+  <line class="ln" x1="300" y1="291" x2="314" y2="291" marker-end="url(#ag-arrow)"/>
+  <line class="ln" x1="466" y1="291" x2="480" y2="291" marker-end="url(#ag-arrow)"/>
+  <line class="ln" x1="614" y1="291" x2="628" y2="291" marker-end="url(#ag-arrow)"/>
+
+  <!-- repair loop -->
+  <rect class="r" x="316" y="356" width="314" height="60" rx="9"/>
+  <text class="tb" x="330" y="378">诊断 → 修复（预算固定 2 次）</text>
+  <text class="t" x="330" y="398">六要素上下文回灌；不可恢复错误不重试</text>
+  <path class="dash" d="M705 324 L705 340 L480 340 L480 356" marker-end="url(#ag-arrow)"/>
+  <path class="dash" d="M316 386 L250 386 L250 326" marker-end="url(#ag-arrow)"/>
+
+  <rect class="g" x="646" y="356" width="214" height="60" rx="9"/>
+  <text class="tb" x="660" y="378">报告 + 版本</text>
+  <text class="t" x="660" y="398">append-only；报告只引用查询结果</text>
+  <line class="ln" x1="705" y1="324" x2="730" y2="354" marker-end="url(#ag-arrow)"/>
+
+  <text class="s" x="20" y="440">副作用边界：失败也写一条 report_version（FAILED），前端据 error_kind 渲染错误带 —— 永不伪造成功。</text>
+</svg>

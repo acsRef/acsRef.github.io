@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" width="880" height="470" role="img" aria-label="RAGent 检索链路与消融结论">
+  <defs>
+    <marker id="rt-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7a"/>
+    </marker>
+    <style>
+      .b{fill:#f4f8fd;stroke:#7ba7d4;stroke-width:1.4}
+      .g{fill:#fdfdfc;stroke:#c9d2da;stroke-width:1.4}
+      .r{fill:#fdf2f2;stroke:#d99a9a;stroke-width:1.4}
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:12px;fill:#26323c}
+      .tb{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;font-weight:600;fill:#1d2b36}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10.5px;fill:#6b7a88}
+      .ln{stroke:#5b6b7a;stroke-width:1.4;fill:none}
+    </style>
+  </defs>
+
+  <text class="tb" x="20" y="26">检索链路：三路召回 → 融合 → 精排 → 去冗余 → 生成</text>
+  <text class="s" x="20" y="44">生产路径始终开启；实验性策略默认关闭（理由见底部消融结论）</text>
+
+  <!-- query -->
+  <rect class="g" x="20" y="66" width="180" height="60" rx="9"/>
+  <text class="tb" x="34" y="88">用户 query</text>
+  <text class="t" x="34" y="110">SSE 流式入口 /api/v1/chat/stream</text>
+
+  <rect class="b" x="232" y="66" width="196" height="60" rx="9"/>
+  <text class="tb" x="246" y="88">Query 改写 + 意图路由</text>
+  <text class="t" x="246" y="110">代词消解 / 复杂拆解 → 路由 1–3 个 KB</text>
+
+  <line class="ln" x1="200" y1="96" x2="230" y2="96" marker-end="url(#rt-arrow)"/>
+
+  <!-- three channels -->
+  <rect class="b" x="20" y="156" width="264" height="72" rx="9"/>
+  <text class="tb" x="34" y="178">① 向量通道</text>
+  <text class="t" x="34" y="198">Qwen3-Embedding-8B @1024 维</text>
+  <text class="t" x="34" y="216">表格用归一化 retrieval_text</text>
+
+  <rect class="b" x="300" y="156" width="264" height="72" rx="9"/>
+  <text class="tb" x="314" y="178">② BM25 通道</text>
+  <text class="t" x="314" y="198">jieba 分词 + PG ts_rank（OR）</text>
+  <text class="t" x="314" y="216">不足 top_k 时 relaxed 兜底</text>
+
+  <rect class="b" x="580" y="156" width="280" height="72" rx="9"/>
+  <text class="tb" x="594" y="178">③ 问题通道（摄入期生成）</text>
+  <text class="t" x="594" y="198">候选问题独立 embedding</text>
+  <text class="t" x="594" y="216">RRF 权重 0.15，防噪声主导</text>
+
+  <line class="ln" x1="330" y1="126" x2="152" y2="154" marker-end="url(#rt-arrow)"/>
+  <line class="ln" x1="330" y1="126" x2="430" y2="154" marker-end="url(#rt-arrow)"/>
+  <line class="ln" x1="330" y1="126" x2="718" y2="154" marker-end="url(#rt-arrow)"/>
+
+  <!-- fusion -->
+  <rect class="b" x="196" y="256" width="300" height="60" rx="9"/>
+  <text class="tb" x="210" y="278">RRF 融合（可选文档级两阶段预筛）</text>
+  <text class="t" x="210" y="300">按排名融合，不按分数 —— 三路分数不可比</text>
+
+  <line class="ln" x1="152" y1="228" x2="300" y2="254" marker-end="url(#rt-arrow)"/>
+  <line class="ln" x1="432" y1="228" x2="360" y2="254" marker-end="url(#rt-arrow)"/>
+  <line class="ln" x1="718" y1="228" x2="420" y2="254" marker-end="url(#rt-arrow)"/>
+
+  <rect class="b" x="530" y="256" width="330" height="60" rx="9"/>
+  <text class="tb" x="544" y="278">bge-reranker-v2-m3 精排 → MMR 去冗余</text>
+  <text class="t" x="544" y="300">MMR λ=0.7，每文档 ≤2 块，跨文档软约束</text>
+
+  <line class="ln" x1="496" y1="286" x2="528" y2="286" marker-end="url(#rt-arrow)"/>
+
+  <rect class="g" x="530" y="340" width="330" height="54" rx="9"/>
+  <text class="tb" x="544" y="362">证据组装 → 流式生成</text>
+  <text class="t" x="544" y="382">冲突检测（5 元组）+ 引用标注 + think/answer 双流</text>
+
+  <line class="ln" x1="695" y1="316" x2="695" y2="338" marker-end="url(#rt-arrow)"/>
+
+  <!-- ablation box -->
+  <rect class="r" x="20" y="340" width="486" height="112" rx="9"/>
+  <text class="tb" x="34" y="362">消融实证：8 组配置，retrieval 已到天花板</text>
+  <text class="t" x="34" y="384">hit@10 全部 = 1.000（20 题回归集）</text>
+  <text class="t" x="34" y="404">MRR：Baseline 0.842 → 5 策略全开 0.850（+0.8pp，噪声内）</text>
+  <text class="t" x="34" y="424">延迟 567–670ms —— 策略 hook 几乎不影响耗时</text>
+  <text class="s" x="34" y="444">结论：跨文档/权威加权/年份补充/查询拆解/证据门 全部默认关闭，只留作单点复评</text>
+</svg>

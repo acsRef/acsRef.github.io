@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 430" width="860" height="430" role="img" aria-label="RAG Runtime 与 Agent Runtime 双项目总览">
+  <defs>
+    <marker id="ov-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7a"/>
+    </marker>
+    <style>
+      .box{fill:#fdfdfc;stroke:#c9d2da;stroke-width:1.4;rx:10}
+      .box-r{fill:#f4f8fd;stroke:#7ba7d4;stroke-width:1.4}
+      .box-a{fill:#fdf7f2;stroke:#d4a373;stroke-width:1.4}
+      .box-m{fill:#f7f5fb;stroke:#9b8ec4;stroke-width:1.4}
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;fill:#26323c}
+      .tb{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:14px;font-weight:600;fill:#1d2b36}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11px;fill:#6b7a88}
+      .lbl{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11px;fill:#5b6b7a}
+      .ln{stroke:#5b6b7a;stroke-width:1.4;fill:none}
+    </style>
+  </defs>
+
+  <text class="tb" x="20" y="28">两个独立 Runtime，一条明确边界</text>
+  <text class="s" x="20" y="46">RAG Runtime 不自建 Agent，Agent Runtime 不重建索引——中间只走 MCP</text>
+
+  <!-- RAG side -->
+  <rect class="box-r" x="24" y="70" width="300" height="150" rx="10"/>
+  <text class="tb" x="40" y="94">RAGent（ragent-py）</text>
+  <text class="s" x="40" y="112">检索运行时 · FastAPI + Vue3 + PG/pgvector</text>
+  <text class="t" x="40" y="136">摄入：解析→切分→元数据→索引</text>
+  <text class="t" x="40" y="156">检索：向量 + BM25 + 问题通道（RRF）</text>
+  <text class="t" x="40" y="176">精排 bge-reranker → MMR → 流式生成</text>
+  <text class="t" x="40" y="196">评测：15 题门禁 + 65 题基准</text>
+
+  <!-- MCP -->
+  <rect class="box-m" x="352" y="96" width="150" height="98" rx="10"/>
+  <text class="tb" x="368" y="120">MCP 服务</text>
+  <text class="s" x="368" y="138">stdio / 工具协议</text>
+  <text class="t" x="368" y="160">search_faq</text>
+  <text class="t" x="368" y="178">search_tables</text>
+
+  <!-- Agent side -->
+  <rect class="box-a" x="530" y="70" width="306" height="150" rx="10"/>
+  <text class="tb" x="546" y="94">ReportAgent</text>
+  <text class="s" x="546" y="112">Agent 运行时 · FastAPI + LangGraph + React</text>
+  <text class="t" x="546" y="136">需求图：理解 → 澄清 → 需求卡</text>
+  <text class="t" x="546" y="156">执行图：SQL 计划→生成→校验→执行→诊断</text>
+  <text class="t" x="546" y="176">记忆：长期表 + 工作区 + 查询模板</text>
+  <text class="t" x="546" y="196">评测：结果准确率 + 子任务归因</text>
+
+  <line class="ln" x1="324" y1="145" x2="350" y2="145" marker-end="url(#ov-arrow)"/>
+  <line class="ln" x1="502" y1="145" x2="528" y2="145" marker-end="url(#ov-arrow)"/>
+
+  <!-- bottom: shared principles -->
+  <rect class="box" x="24" y="248" width="392" height="152" rx="10"/>
+  <text class="tb" x="40" y="272">共同原则一：确定性优先</text>
+  <text class="t" x="40" y="294">· 能判的先判：关键词/正则/状态机 → 模型只处理歧义</text>
+  <text class="t" x="40" y="314">· 模型输出必被校验：枚举 / 注册表 / schema 白名单</text>
+  <text class="t" x="40" y="334">· 错误路径一等公民：FAILED 也落库，永不伪造成功</text>
+  <text class="t" x="40" y="354">· 三态语义：SUCCESS / EMPTY / FAILED 全程区分</text>
+  <text class="s" x="40" y="380">ReportAgent 1768 + 491 测试；RAGent 506 个测试函数</text>
+
+  <rect class="box" x="436" y="248" width="400" height="152" rx="10"/>
+  <text class="tb" x="452" y="272">共同原则二：能量化才敢说好</text>
+  <text class="t" x="452" y="294">· RAGent：hit@10=1.000，MRR 0.842→0.850（+0.8pp）</text>
+  <text class="t" x="452" y="314">· 8 组消融无 recall 增益 → 花哨策略默认关，不进生产</text>
+  <text class="t" x="452" y="334">· ReportAgent：执行准确率 0 → 10/10 有金标全对</text>
+  <text class="t" x="452" y="354">· 跑通率 1.0 但答案错 3.4 倍 —— 指标选错等于自欺</text>
+  <text class="s" x="452" y="380">两个项目各自 59 / 127 份带「明确不做」的设计文档</text>
+</svg>
