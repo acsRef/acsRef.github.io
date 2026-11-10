@@ -5,8 +5,10 @@ updated: 2026-11-10 21:50:00
 tags:
   - Agent
   - 评测
-  - Execution Accuracy
+  - SQL
   - 复盘
+  - 数据驱动
+  - 工程实践
 categories:
   - Agent Runtime
 description: '把主指标从"SQL 跑通率"换成"执行结果准确率"之后，第一次跑就抓到真 bug——但对它的第一次归因是错的。'

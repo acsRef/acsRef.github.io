@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" width="880" height="430" role="img" aria-label="记忆归并的判定流程">
+  <defs>
+    <marker id="mg-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7a"/>
+    </marker>
+    <style>
+      .g{fill:#fdfdfc;stroke:#c9d2da;stroke-width:1.4}
+      .m{fill:#f7f5fb;stroke:#9b8ec4;stroke-width:1.4}
+      .r{fill:#fdf2f2;stroke:#d99a9a;stroke-width:1.4}
+      .b{fill:#f4f8fd;stroke:#7ba7d4;stroke-width:1.4}
+      .y{fill:#fdf9ef;stroke:#d9b46a;stroke-width:1.4}
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;fill:#26323c}
+      .tb{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:12.5px;font-weight:600;fill:#1d2b36}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10.5px;fill:#6b7a88}
+      .ln{stroke:#5b6b7a;stroke-width:1.4;fill:none}
+      .lbl{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10px;fill:#5b6b7a}
+    </style>
+  </defs>
+
+  <text class="tb" x="20" y="24">两条记忆 → 结构优先判定（不先看余弦）</text>
+  <text class="s" x="20" y="42">每一步都是确定性检查；余弦只在最后一步当"要不要送人工复审"的信号</text>
+
+  <!-- step 1 -->
+  <rect class="b" x="20" y="62" width="196" height="62" rx="8"/>
+  <text class="tb" x="34" y="84">① 极性一致？</text>
+  <text class="t" x="34" y="104">一条含否定词，另一条不含</text>
+  <text class="s" x="34" y="118">→ 直接 distinct</text>
+
+  <rect class="r" x="264" y="62" width="180" height="62" rx="8"/>
+  <text class="tb" x="278" y="84">distinct · polarity</text>
+  <text class="t" x="278" y="104">「都用柱状图」vs「不要柱状图」</text>
+  <text class="s" x="278" y="118">余弦 0.906–0.962，最像却最不能并</text>
+
+  <line class="ln" x1="216" y1="93" x2="262" y2="93" marker-end="url(#mg-arrow)"/>
+  <text class="lbl" x="219" y="86">不一致</text>
+
+  <!-- step 2 -->
+  <rect class="b" x="20" y="146" width="196" height="62" rx="8"/>
+  <text class="tb" x="34" y="168">② 数字集合相同？</text>
+  <text class="t" x="34" y="188">抽出的数字（含单位）逐个比</text>
+  <text class="s" x="34" y="202">→ 不同则 distinct</text>
+
+  <rect class="r" x="264" y="146" width="180" height="62" rx="8"/>
+  <text class="tb" x="278" y="168">distinct · numbers</text>
+  <text class="t" x="278" y="188">「按 2 周」vs「按 3 周」</text>
+  <text class="s" x="278" y="202">数字不同 = 不同的事</text>
+
+  <line class="ln" x1="216" y1="177" x2="262" y2="177" marker-end="url(#mg-arrow)"/>
+  <line class="ln" x1="118" y1="124" x2="118" y2="144" marker-end="url(#mg-arrow)"/>
+  <text class="lbl" x="122" y="138">一致</text>
+
+  <!-- step 3 -->
+  <rect class="b" x="20" y="230" width="196" height="62" rx="8"/>
+  <text class="tb" x="34" y="252">③ 原子值冲突？</text>
+  <text class="t" x="34" y="272">图表/粒度/区域/指标 任一不同</text>
+  <text class="s" x="34" y="286">→ distinct（并指出哪个原子）</text>
+
+  <rect class="r" x="264" y="230" width="180" height="62" rx="8"/>
+  <text class="tb" x="278" y="252">distinct · atom-conflict</text>
+  <text class="t" x="278" y="272">「柱状图」vs「饼图」</text>
+  <text class="s" x="278" y="286">冲突的原子类型会写进 reason</text>
+
+  <line class="ln" x1="216" y1="261" x2="262" y2="261" marker-end="url(#mg-arrow)"/>
+  <line class="ln" x1="118" y1="208" x2="118" y2="228" marker-end="url(#mg-arrow)"/>
+  <text class="lbl" x="122" y="222">一致</text>
+
+  <!-- step 4 -->
+  <rect class="m" x="20" y="314" width="196" height="62" rx="8"/>
+  <text class="tb" x="34" y="336">④ 原子集合完全相同？</text>
+  <text class="t" x="34" y="356">同类型、同取值、非空</text>
+  <text class="s" x="34" y="370">→ merge（累加证据）</text>
+
+  <rect class="m" x="264" y="314" width="180" height="62" rx="8"/>
+  <text class="tb" x="278" y="336">merge · atoms-equal</text>
+  <text class="t" x="278" y="356">「以后都用柱状图」vs「默认给柱状图」</text>
+  <text class="s" x="278" y="370">余弦 0.695 也能正确合并</text>
+
+  <line class="ln" x1="118" y1="292" x2="118" y2="312" marker-end="url(#mg-arrow)"/>
+  <line class="ln" x1="216" y1="345" x2="262" y2="345" marker-end="url(#mg-arrow)"/>
+  <text class="lbl" x="219" y="338">是</text>
+
+  <!-- step 5 -->
+  <rect class="y" x="20" y="394" width="196" height="34" rx="8"/>
+  <text class="t" x="34" y="416">⑤ 否则：余弦 ≥ 0.90 → review</text>
+  <rect class="g" x="264" y="394" width="180" height="34" rx="8"/>
+  <text class="t" x="278" y="416">否则 → distinct</text>
+
+  <!-- right panel: why -->
+  <rect class="g" x="470" y="62" width="392" height="366" rx="9"/>
+  <text class="tb" x="486" y="84">为什么不先看余弦（真 embedding 实测）</text>
+  <text class="t" x="486" y="110">26 对样本的三类分布完全重叠：</text>
+  <text class="s" x="486" y="132">同义（该并）：0.694 – 0.933，中位 0.881</text>
+  <text class="s" x="486" y="150">不同的事：0.642 – 0.950，中位 0.809</text>
+  <text class="s" x="486" y="168">相反说法：0.906 – 0.962，中位 0.933</text>
+  <text class="t" x="486" y="196">θ = 0.90 时的后果：</text>
+  <text class="s" x="486" y="218">误并 7 对（含 5 对"相反说法"）</text>
+  <text class="s" x="486" y="236">误拆 8 对（余弦低于阈值）</text>
+  <text class="t" x="486" y="264">θ 扫描 0.80 – 0.94 全部失败：</text>
+  <text class="s" x="486" y="286">最好的一组仍有 3 对误并</text>
+  <text class="s" x="486" y="304">（θ=0.94：误并 3 / 该并的 0 对通过）</text>
+
+  <text class="tb" x="486" y="336">结构判定的实测结果（当前代码）</text>
+  <text class="t" x="486" y="360">24 / 26 判对</text>
+  <text class="t" x="486" y="382">误并 0（precision 1.00）· 漏并 2（recall 0.83）</text>
+  <text class="s" x="486" y="406">漏并方向保守：宁可少并，也不会把相反的说法并掉</text>
+</svg>

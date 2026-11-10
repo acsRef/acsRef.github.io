@@ -6,6 +6,9 @@ tags:
   - Agent
   - 记忆系统
   - 向量检索
+  - pgvector
+  - 数据驱动
+  - 工程实践
 categories:
   - Agent Runtime
 description: '四层记忆、一道准入闸、一次被数据否掉的设计。为什么不用余弦相似度自动合并记忆：因为相反说法的相似度和同义说法完全重叠。'

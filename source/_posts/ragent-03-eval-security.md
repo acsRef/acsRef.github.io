@@ -6,7 +6,9 @@ tags:
   - RAG
   - 评测
   - 安全
+  - 权限控制
   - 可观测性
+  - MCP
 categories:
   - RAG Runtime
 description: 'Evaluator v1 的双层评测、PII 三层检测、RBAC 权限矩阵、熔断降级与全链路诊断，以及一个对外提供能力的 MCP 服务。'

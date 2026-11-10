@@ -6,6 +6,9 @@ tags:
   - Agent
   - LangGraph
   - 架构设计
+  - 状态管理
+  - SQL
+  - 工程实践
 categories:
   - Agent Runtime
 description: '把"理解需求"和"执行查询"拆成两张图，用一张需求卡做契约，用三态落库保证永不伪造成功。'

@@ -5,8 +5,10 @@ updated: 2026-11-10 21:10:00
 tags:
   - RAG
   - 混合检索
-  - 消融实验
   - RRF
+  - 重排
+  - 消融实验
+  - 检索优化
 categories:
   - RAG Runtime
 description: '三路召回 + RRF + 跨编码器重排 + MMR；然后 8 组消融证明：在真实语料上，5 个高级检索策略的召回增益是 0。'
