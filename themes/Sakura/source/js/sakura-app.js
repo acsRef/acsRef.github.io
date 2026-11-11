@@ -1137,6 +1137,7 @@ var home = location.href,
         $('#main-container,#mo-nav,.openNav').toggleClass('open')
       }
     }, splay: function () {
+      if (!s) return; // 视频元素已移除（本站不用视频背景）
       $('#video-btn').addClass('video-pause').removeClass('video-play').show()
       $('.video-stu').css({
         'bottom': '-100px'
@@ -1156,6 +1157,7 @@ var home = location.href,
             // } catch (e) {}
       s.play()
     }, spause: function () {
+      if (!s) return;
       $('#video-btn').addClass('video-play').removeClass('video-pause')
       $('.focusinfo').css({
         'top': '49.3%'
@@ -1164,12 +1166,14 @@ var home = location.href,
       $('#banner_wave_2').removeClass('banner_wave_hide')
       s.pause()
     }, liveplay: function () {
+      if (!s) return;
       if (s.oncanplay != undefined && $('.haslive').length > 0) {
         if ($('.videolive').length > 0) {
           Siren.splay()
         }
       }
     }, livepause: function () {
+      if (!s) return;
       if (s.oncanplay != undefined && $('.haslive').length > 0) {
         Siren.spause()
         $('.video-stu').css({
