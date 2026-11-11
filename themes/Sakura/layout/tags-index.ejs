@@ -1,0 +1,26 @@
+<%
+  // 标签总览页（主题本身没有这个模板，自己补一个）
+  // 用法：页面 front-matter 写 layout: tags-index
+%>
+<div class="pattern-center-blank"></div>
+<div class="pattern-center">
+  <div class="pattern-attachment-img">
+    <img src="/img/hero-ink.svg" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+  </div>
+  <header class="pattern-header">
+    <h1 class="cat-title">标签</h1>
+  </header>
+</div>
+<div id="content" class="site-content">
+  <div id="primary" class="content-area">
+    <main id="main" class="site-main" role="main">
+      <div class="taxonomy-list">
+        <% site.tags.each(function (tag) { %>
+          <a class="taxonomy-item" href="<%- url_for(tag.path) %>">
+            <%- tag.name %><span class="taxonomy-count"><%- tag.length %></span>
+          </a>
+        <% }) %>
+      </div>
+    </main>
+  </div>
+</div>
