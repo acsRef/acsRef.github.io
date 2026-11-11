@@ -13,7 +13,7 @@ categories:
   - Agent Runtime
 description: '把"理解需求"和"执行查询"拆成两张图，用一张需求卡做契约，用三态落库保证永不伪造成功。'
 photos:
-  - '/img/cover-window.svg'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg2.jpg&w=1200&output=jpg&q=80'
 ---
 
 ## 这个系统在做什么

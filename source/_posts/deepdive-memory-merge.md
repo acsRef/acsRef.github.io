@@ -12,7 +12,7 @@ categories:
   - 项目深挖
 description: '26 对真实样本 + 真 embedding：同义、不同的事、相反说法三类相似度完全重叠。所以归并交给结构判定，余弦只当"要不要送人工复审"的信号。含 26 行实测数据与 2 处漏并的根因。'
 photos:
-  - '/img/cover-window.svg'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg3.jpg&w=1200&output=jpg&q=80'
 ---
 
 ## 问题：两条记忆像不像，谁说了算？

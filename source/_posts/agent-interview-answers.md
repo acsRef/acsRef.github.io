@@ -12,7 +12,7 @@ categories:
   - 面试
 description: '题库 12 题 + 项目深挖 10 题。每题拆成「一句话答案 / 概念展开 / 项目里怎么做 / 追问与坑 / 边界」，并附术语速查。所有数字都能在两个项目里查到出处。'
 photos:
-  - '/img/cover-bamboo.svg'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/sakura.jpg&w=1200&output=jpg&q=80'
 ---
 
 ## 怎么读这篇

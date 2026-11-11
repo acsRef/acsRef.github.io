@@ -13,7 +13,7 @@ categories:
   - RAG Runtime
 description: 'Evaluator v1 的双层评测、PII 三层检测、RBAC 权限矩阵、熔断降级与全链路诊断，以及一个对外提供能力的 MCP 服务。'
 photos:
-  - '/img/cover-bamboo.svg'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/sakura.jpg&w=1200&output=jpg&q=80'
 ---
 
 前两篇讲"怎么取到对的材料"，这一篇讲"怎么证明它是对的、出错时怎么兜、以及怎么被别的系统用"。

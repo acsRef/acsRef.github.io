@@ -12,7 +12,7 @@ categories:
   - 项目深挖
 description: '用户已经说出口的时间、范围、口径，不该由模型抽样决定。这篇给出裁决的三类事实、真实输入输出表、四条设计约束，以及"同一句话必须产出同一张卡"的差分探针。'
 photos:
-  - '/img/cover-bamboo.svg'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg2.jpg&w=1200&output=jpg&q=80'
 ---
 
 ## 一、一个具体的失败

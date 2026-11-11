@@ -12,7 +12,7 @@ categories:
   - RAG Runtime
 description: '企业级 RAG 的摄入管线：多格式解析、结构感知切分、表格双表示、增量索引。检索效果的上限在摄入阶段就已经决定了。'
 photos:
-  - '/img/cover-bamboo.svg'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg4.jpg&w=1200&output=jpg&q=80'
 ---
 
 ## 先说结论

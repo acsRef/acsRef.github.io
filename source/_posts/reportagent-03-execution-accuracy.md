@@ -13,7 +13,7 @@ categories:
   - Agent Runtime
 description: '把主指标从"SQL 跑通率"换成"执行结果准确率"之后，第一次跑就抓到真 bug——但对它的第一次归因是错的。'
 photos:
-  - '/img/hero-ink.svg'
+  - 'https://wsrv.nl/?url=cdn.jsdelivr.net/gh/DragonBaby308/cdn@2.1/img/bg/bg4.jpg&w=1200&output=jpg&q=80'
 ---
 
 ## 一、指标选错，等于自欺
