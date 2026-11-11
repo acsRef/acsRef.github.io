@@ -485,12 +485,31 @@ const FAULT_GROUPS = [
        "后台任务判超时 → 落 FAILED → 发 <code>TASK_TIMEOUT</code>", "600s", "不会永远卡在「生成中」"],
     ],
   },
+  {
+    key:"recover", title:"崩了也能救 —— 进程被杀之后的四道兜底",
+    note:"这一组是「任务跑到一半强杀后端」的实验逼出来的：原先崩溃只在库里留下一个卡死的 generating，重试按钮永远不出现",
+    rows:[
+      ["启动钩子（整条请求）", "后端进程被强杀 / 容器重启 —— 后台任务在进程内存里，随进程一起消失",
+       "启动时扫 <code>parsing / generating / adjusting</code> 的会话并二分：<b>该 draft 已有 done 版本</b> → 只把 phase 修回 <code>report_ready</code>（任务其实跑完了、只是没来得及改相位）；<b>没有</b> → 落一条 <code>status=error</code> + <code>kind=interrupted</code>，会话置 <code>phase=error</code> + <code>last_failed_action=confirm</code>",
+       "每次启动跑一次", "打开就是 ErrorCard +「重试当前任务」，不再永远「生成中」"],
+      ["sql_diagnose（失败收口）", "可恢复失败（timeout / connection / object / other）",
+       "自动排一次带退避的重试：<code>AUTO_RETRY_MAX</code>（默认 1）、退避 <code>AUTO_RETRY_BACKOFF_S</code>（默认 3s，翻倍）；<b>先记账再跑</b>；延迟结束前再查一次占用，你已手动重试就自动让位",
+       "默认 1 次（0 = 关闭）", "多数情况你还没反应过来它已经重跑完了"],
+      ["sql_diagnose / 子图入口", "「重试过几次」原先只活在图的 State 里（dev = MemorySaver），进程一重启就归零",
+       "每次重试落一行 <code>agent.retry_attempt</code>（预算维度 / action / error_kind / reason）；进 SQL 子图前按 <code>(session, draft)</code> 数一遍播种回 State",
+       "跨重启不清零", "预算不会被「每次都是第 1 次重试」无限绕过"],
+      ["任意节点（trace）", "span 原来只在请求结束才 flush —— 崩溃时整批丢失，最贵的 <code>sql_plan</code> 一个不剩",
+       "按游标增量落盘：每攒够 <code>TRACE_FLUSH_EVERY</code>（默认 10）个 span 就在节点边界落一次（<code>save_span</code> 是纯 INSERT，所以必须记游标、不能重写全量）；终态 flush 只补尾巴",
+       "阈值 10（0 = 关闭）", "同样的崩溃：落库 span <b>23 → 54</b>；<code>trace.status=RUNNING</code> 就是「这次被中断」的证据"],
+    ],
+  },
 ];
 
 const FAULT_ACTIONS = [
-  ["先看状态", "报告版本行上的 <code>status</code>（SUCCESS / EMPTY / FAILED）与 <code>error_kind</code>，比看日志快"],
+  ["先看状态", "报告版本行上的 <code>status</code>（SUCCESS / EMPTY / FAILED）与 <code>error_kind</code>，比看日志快；<code>interrupted</code> = 服务重启把它打断了，直接重试即可"],
   ["再点重试", "<code>POST /api/v1/sessions/{sid}/retry</code> 只对可恢复 kind 有效（timeout / connection / object / other）；<code>permission</code> 重试也是同样的失败"],
   ["查决策", "<code>sql_diagnose</code> 那条 span 里有 action、reason、retry_counters —— 它为什么这么走，全在那条 reason 里"],
+  ["查记账", "<code>select * from agent.retry_attempt where session_id='…'</code>：重试过几次、哪个预算、什么错误。这张表跨重启不清零"],
   ["查 MCP", "trace 里 <code>data_search_schema</code> 的 detail 出现「用本地 schema 兜底」= MCP 挂了；顺手看一眼 8000 端口"],
   ["查契约", "后端日志关键字：<code>SUSPECT_NULL_GROUP</code> / <code>required filter missing</code> / <code>filter in join-on violated</code>"],
 ];
@@ -739,19 +758,21 @@ function show(key, opts){
 }
 
 /* ── 故障视图渲染 ───────────────────────────────────────────────────────── */
-const FAULT_BADGE = {auto:"自动重试", degrade:"降级继续", ask:"停下来问你", stop:"停下来失败"};
+const FAULT_BADGE = {auto:"自动重试", degrade:"降级继续", ask:"停下来问你", stop:"停下来失败", recover:"崩了也能救"};
 const FAULT_COLOR = {auto:["#0f766e","#ecfdf5"], degrade:["#b45309","#fffbeb"],
-                     ask:["#1d4ed8","#eff6ff"], stop:["#be123c","#fff1f2"]};
+                     ask:["#1d4ed8","#eff6ff"], stop:["#be123c","#fff1f2"],
+                     recover:["#6d28d9","#f5f3ff"]};
 
 function renderFaults(){
   const parts = [];
   parts.push(`<div class="banner" style="margin-bottom:16px">
     <b>一句话规则：</b>骨架（流程、预算、状态、错误分类）是确定性的，模型只负责「写 SQL / 写人话」；
-    所以节点失败时由<b>决策表</b>决定下一步，而不是再问一次模型。四类处置：
+    所以节点失败时由<b>决策表</b>决定下一步，而不是再问一次模型。五类处置：
     <span class="fbadge" style="--bc:#0f766e;--bbg:#ecfdf5">自动重试</span>
     <span class="fbadge" style="--bc:#b45309;--bbg:#fffbeb">降级继续</span>
     <span class="fbadge" style="--bc:#1d4ed8;--bbg:#eff6ff">停下来问你</span>
     <span class="fbadge" style="--bc:#be123c;--bbg:#fff1f2">停下来失败</span>
+    <span class="fbadge" style="--bc:#6d28d9;--bbg:#f5f3ff">崩了也能救</span>
   </div>`);
 
   for (const g of FAULT_GROUPS){
@@ -863,9 +884,9 @@ $("#cards").innerHTML = GRAPHS.map(g=>{
     <div class="meta"><span>${g.nodes.length} 节点</span><span>${g.edges.length} 边</span><span>${det} 确定性 / ${llm} 调模型</span></div>
   </div>`;
 }).join("") + `<div class="card" data-key="faults">
-    <div class="num">故障矩阵 · 16 条</div>
+    <div class="num">故障矩阵 · 20 条</div>
     <h3>节点挂了怎么办</h3>
-    <p>每个节点的失败分类、重试预算、用户可见结果，以及真出事时按什么顺序查。四类处置：自动重试 / 降级继续 / 停下来问你 / 停下来失败。</p>
+    <p>每个节点的失败分类、重试预算、用户可见结果，以及真出事时按什么顺序查。五类处置：自动重试 / 降级继续 / 停下来问你 / 停下来失败 / 崩了也能救。</p>
     <div class="meta"><span>预算固定</span><span>决策不看模型</span></div>
   </div>` + `<div class="card" data-key="__trace">
     <div class="num">回放 · 67 spans</div>
