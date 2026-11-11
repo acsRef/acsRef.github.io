@@ -99,6 +99,8 @@
   .note{font-size:12px;color:var(--muted);margin-top:10px}
   .banner{background:var(--teal-soft);border:1px solid #a7f3d0;color:#0f766e;border-radius:10px;padding:9px 13px;font-size:12.5px;margin-bottom:12px}
   .banner b{font-weight:700}
+  .fbadge{display:inline-block;font-size:11px;padding:1px 9px;border-radius:20px;
+    border:1px solid var(--bc);background:var(--bbg);color:var(--bc);font-weight:600;margin:0 3px;vertical-align:1px}
   .hidden{display:none !important}
 </style>
 </head>
@@ -139,6 +141,14 @@
         <code class="mono">thinking</code>（turn_understand 流式思考）· <code class="mono">report</code> + <code class="mono">done</code>（persist_report 之后）。
       </div>
     </div>
+  </div>
+
+  <div id="faults" class="canvasCard hidden">
+    <div class="canvasHead">
+      <div class="t">节点出问题时：谁做决定、能重试几次、你会看到什么</div>
+      <div class="f">决策来自 <code class="mono">reliability/</code> + <code class="mono">DiagnosePolicy</code>，预算固定，不靠模型判断</div>
+    </div>
+    <div id="faultBody" style="padding:14px 16px 20px"></div>
   </div>
 
   <div class="layout hidden" id="graphArea">
@@ -408,6 +418,84 @@ const GRAPHS = [
 }
 ];
 
+/* ── 故障处理矩阵（plan 2026-11-11：每个节点出事谁兜、兜几次）───────────────
+   数据来源：app/reliability/（errors / retry / timeout）、sql_graph.DiagnosePolicy、
+   sql_tools 的超时常量、main.py 的后台任务预算。全部是代码里的确定值，不是设计草稿。 */
+const FAULT_GROUPS = [
+  {
+    key:"auto", title:"自动重试 —— 有预算，你不需要管",
+    note:"预算写死在 reliability/retry.RETRY_BUDGETS，用尽就换策略，不会无限重试",
+    rows:[
+      ["sql_generate", "生成的 SQL 过不了校验（语法 / 列名 / 明细契约 / 今天新增的过滤契约）",
+       "DiagnosePolicy 决策表 → <code>retry_sql</code>（带上次 SQL + 错误原文重生成）→ 仍不过换 <code>replan</code>",
+       "SQL 2 次 / 重规划 1 次", "trace 里出现「诊断修复」；最后仍不过就转成「问你」"],
+      ["sql_generate", "列名/表名猜错（<code>object_not_found</code>）",
+       "不走盲重写：先按 SQL 里的表名重新取一次 DDL，再重新生成",
+       "MCP schema 2 次（独立预算）", "每一步在 trace 里能看到 reason"],
+      ["任意 LLM 节点", "429 限流 / 5xx / 网络抖动",
+       "LLM adapter 内部令牌桶限流（10 req/s）+ 指数退避重试",
+       "瞬时重试 2 次，单次调用总预算 90s", "通常无感；超了才升级成节点故障"],
+    ],
+  },
+  {
+    key:"degrade", title:"降级继续 —— 会出结果，但质量可能打折",
+    note:"这些是「不中断」的故障：宁可给一个带说明的结果，也不给你一个空白页",
+    rows:[
+      ["turn_understand", "模型超时 / 思考预算（1536 token）耗尽 / 返回的 JSON 坏",
+       "不重试同一条提示：先用「不思考」快速模式再试一次，仍拿不到 TurnPlan 就回落通用解析器 <code>requirement_parse</code>",
+       "首轮 90s + 快速 30s，单轮总预算 120s", "需求卡照常出，但可能是通用解析的结果"],
+      ["classify_intent", "意图分类的模型调用失败",
+       "降级为「报表」继续（保主流程）", "—", "不会报错；最坏情况是把闲聊当报表"],
+      ["data_agent（schema 检索）", "<b>MCP 取不到数据</b>（ragent-py 挂了 / 超时 / 返回不认识）",
+       "显式标注 unavailable，再用本地关键词匹配兜底；<b>不中断</b>，SQL 照常生成",
+       "MCP 2 次（在诊断路径上）", "trace 里出现「用本地 schema 兜底」——这时 schema 可能不全"],
+      ["sql_generate（FAQ 检索）", "口径 / fewshot 检索失败",
+       "没有 FAQ 上下文继续生成（日志 warning）", "—", "无感，但口径提示少一层"],
+      ["requirement_preview", "口径预览查询失败 / 超时 / 空值",
+       "fail-open：澄清选项退回纯文字", "—", "不会显示 0 元假数"],
+      ["report_agent", "叙述模型失败，或叙述里的数字对不上结果集",
+       "退回确定性结论（最高/最低 + 合计），今天的修复让空分组不再冒充「最高的那个月」",
+       "—", "核心发现变短，但每个数都能对上"],
+      ["任意节点 + 浏览器断连", "SSE 断了 / 关页面",
+       "后台任务继续跑完并落库，不中断执行", "任务保留 10 分钟供迟到订阅者重放", "刷新后用会话快照轮询拿结果"],
+    ],
+  },
+  {
+    key:"ask", title:"停下来问你 —— 这不是错误，是省预算",
+    note:"决策表打完所有确定性牌之后，把选择权交回人，而不是拿同样的 prompt 再赌一次",
+    rows:[
+      ["sql_plan", "计划 JSON 不合法 / 字段验证失败",
+       "直接给 <code>clarify</code>（问缺哪个维度/指标）", "不重试", "界面出现澄清选项"],
+      ["sql_diagnose", "重试预算用尽，或列名歧义（<code>object_ambiguous</code>）",
+       "转 clarify：要么补充信息，要么换问法", "—", "卡片上给可选口径 / 维度"],
+      ["reportability（需求层）", "字段不够、口径有歧义",
+       "NEED_MORE → 需求卡带澄清项，等确认/补充", "—", "不会带着缺失字段直接出数"],
+    ],
+  },
+  {
+    key:"stop", title:"停下来失败 —— 但绝不伪造成功",
+    note:"三态落库：SUCCESS / EMPTY / FAILED 都会写一行 agent.report_version，失败也留在历史里",
+    rows:[
+      ["sql_execute", "查询超过 30s（<code>statement_timeout</code>）/ 权限不足 / 连不上库",
+       "不可 agent 恢复 → <code>fail</code> → 落 FAILED（带 error_kind + 试过的 SQL）",
+       "连接 10s / 查询 30s", "前端 ErrorCard；可点「重试」"],
+      ["report_agent（校验）", "ReportSpec 校验不通过（数字疑似编造 / 结构缺失）",
+       "violations → FAILED（宪法 §10 永不伪造成功）", "—", "白纸黑字说没出成，而不是给一张好看的假表"],
+      ["整条请求", "总耗时超过 600s",
+       "后台任务判超时 → 落 FAILED → 发 <code>TASK_TIMEOUT</code>", "600s", "不会永远卡在「生成中」"],
+    ],
+  },
+];
+
+const FAULT_ACTIONS = [
+  ["先看状态", "报告版本行上的 <code>status</code>（SUCCESS / EMPTY / FAILED）与 <code>error_kind</code>，比看日志快"],
+  ["再点重试", "<code>POST /api/v1/sessions/{sid}/retry</code> 只对可恢复 kind 有效（timeout / connection / object / other）；<code>permission</code> 重试也是同样的失败"],
+  ["查决策", "<code>sql_diagnose</code> 那条 span 里有 action、reason、retry_counters —— 它为什么这么走，全在那条 reason 里"],
+  ["查 MCP", "trace 里 <code>data_search_schema</code> 的 detail 出现「用本地 schema 兜底」= MCP 挂了；顺手看一眼 8000 端口"],
+  ["查契约", "后端日志关键字：<code>SUSPECT_NULL_GROUP</code> / <code>required filter missing</code> / <code>filter in join-on violated</code>"],
+];
+
+
 /* 真实 trace（同一 session，按 span 开始时间排序；只有 NODE 类型进回放） */
 const TRACE = [
   ["req","security_guard",0],["req","classify_intent",563],["req","data_agent",314],
@@ -634,9 +722,11 @@ function show(key, opts){
   if (!keepPlay){ stopPlay(); playIdx = -1; $("#playState").textContent = ""; }
   current = key;
   $("#overview").classList.toggle("hidden", key !== "overview");
-  $("#graphArea").classList.toggle("hidden", key === "overview");
+  $("#faults").classList.toggle("hidden", key !== "faults");
+  $("#graphArea").classList.toggle("hidden", key === "overview" || key === "faults");
   document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.key===key)));
   if (key === "overview") return;
+  if (key === "faults"){ renderFaults(); return; }
   const g = byKey[key];
   $("#gTitle").textContent = `${g.num} · ${g.title}（${g.nodes.length} 节点 / ${g.edges.length} 边）`;
   $("#gFile").textContent = `${g.node} → ${g.file}`;
@@ -646,6 +736,56 @@ function show(key, opts){
     $("#panel").innerHTML = `<div class="empty">${g.blurb}<br><br>点任意节点看职责、输入输出、失败分支和实测耗时。</div>`;
     selected = null;
   }
+}
+
+/* ── 故障视图渲染 ───────────────────────────────────────────────────────── */
+const FAULT_BADGE = {auto:"自动重试", degrade:"降级继续", ask:"停下来问你", stop:"停下来失败"};
+const FAULT_COLOR = {auto:["#0f766e","#ecfdf5"], degrade:["#b45309","#fffbeb"],
+                     ask:["#1d4ed8","#eff6ff"], stop:["#be123c","#fff1f2"]};
+
+function renderFaults(){
+  const parts = [];
+  parts.push(`<div class="banner" style="margin-bottom:16px">
+    <b>一句话规则：</b>骨架（流程、预算、状态、错误分类）是确定性的，模型只负责「写 SQL / 写人话」；
+    所以节点失败时由<b>决策表</b>决定下一步，而不是再问一次模型。四类处置：
+    <span class="fbadge" style="--bc:#0f766e;--bbg:#ecfdf5">自动重试</span>
+    <span class="fbadge" style="--bc:#b45309;--bbg:#fffbeb">降级继续</span>
+    <span class="fbadge" style="--bc:#1d4ed8;--bbg:#eff6ff">停下来问你</span>
+    <span class="fbadge" style="--bc:#be123c;--bbg:#fff1f2">停下来失败</span>
+  </div>`);
+
+  for (const g of FAULT_GROUPS){
+    const [bc, bg] = FAULT_COLOR[g.key];
+    parts.push(`<h3 style="font-size:14px;margin:18px 0 4px;display:flex;align-items:center;gap:8px">
+      <span class="fbadge" style="--bc:${bc};--bbg:${bg}">${FAULT_BADGE[g.key]}</span>
+      <span>${g.title}</span></h3>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px">${g.note}</div>
+      <table class="phase"><thead><tr>
+        <th style="width:150px">节点</th><th style="width:220px">出什么事</th>
+        <th>系统怎么处理</th><th style="width:130px">预算 / 时限</th><th style="width:230px">你会看到什么</th>
+      </tr></thead><tbody>`);
+    for (const row of g.rows){
+      parts.push(`<tr>
+        <td><code class="mono">${row[0]}</code></td>
+        <td>${row[1]}</td>
+        <td>${row[2]}</td>
+        <td style="color:var(--ink-2)">${row[3]}</td>
+        <td style="color:var(--ink-2)">${row[4]}</td>
+      </tr>`);
+    }
+    parts.push(`</tbody></table>`);
+  }
+
+  parts.push(`<h3 style="font-size:14px;margin:22px 0 6px">真出事了，按这个顺序查</h3>
+    <table class="phase"><tbody>`);
+  for (const [label, text] of FAULT_ACTIONS){
+    parts.push(`<tr><td style="width:110px;font-weight:600;color:var(--ink)">${label}</td><td>${text}</td></tr>`);
+  }
+  parts.push(`</tbody></table>
+    <div class="note">以上预算与时限都是代码里的常量：<code class="mono">RETRY_BUDGETS</code>（sql_repair 2 / mcp 2 / llm_transient 2）、
+    <code class="mono">STATEMENT_TIMEOUT_MS=30000</code>、<code class="mono">MAX_TASK_DURATION=600</code>、
+    <code class="mono">TURN_REQUEST_BUDGET=120</code>。改它们要同步改契约测试。</div>`);
+  $("#faultBody").innerHTML = parts.join("");
 }
 
 /* ── 真实轨迹回放 ───────────────────────────────────────────────────────── */
@@ -693,7 +833,7 @@ function startPlay(){
 }
 
 /* ── 初始化 ─────────────────────────────────────────────────────────────── */
-const tabs = [["overview","总览"], ...GRAPHS.map(g=>[g.key, `${g.num} ${g.title}`])];
+const tabs = [["overview","总览"], ...GRAPHS.map(g=>[g.key, `${g.num} ${g.title}`]), ["faults","故障处理"]];
 $("#tabs").innerHTML = tabs.map(([k,label],i)=>{
   const sel = k === "req" ? "true" : "false";
   return `<button role="tab" data-key="${k}" aria-selected="${sel}">${label}</button>`;
@@ -722,7 +862,12 @@ $("#cards").innerHTML = GRAPHS.map(g=>{
     <p>${g.blurb}</p>
     <div class="meta"><span>${g.nodes.length} 节点</span><span>${g.edges.length} 边</span><span>${det} 确定性 / ${llm} 调模型</span></div>
   </div>`;
-}).join("") + `<div class="card" data-key="__trace">
+}).join("") + `<div class="card" data-key="faults">
+    <div class="num">故障矩阵 · 16 条</div>
+    <h3>节点挂了怎么办</h3>
+    <p>每个节点的失败分类、重试预算、用户可见结果，以及真出事时按什么顺序查。四类处置：自动重试 / 降级继续 / 停下来问你 / 停下来失败。</p>
+    <div class="meta"><span>预算固定</span><span>决策不看模型</span></div>
+  </div>` + `<div class="card" data-key="__trace">
     <div class="num">回放 · 67 spans</div>
     <h3>按真实轨迹走一遍</h3>
     <p>进任意一张图点「回放真实轨迹」，会按 2026-11-11 那次请求的 span 顺序点亮节点，并显示每一步的真实耗时。跨图会自动切换。</p>
