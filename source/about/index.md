@@ -32,6 +32,8 @@ comments: false
 - ReportAgent 全解（一）：两张图、一份契约、三态落库
 - ReportAgent 全解（二）：记忆系统——先测，再设计
 - ReportAgent 全解（三）：跑通率 1.0，答案错了 3.4 倍
+- [把 41 个节点画成一张可点的图：LangGraph 全链路到底长什么样](/posts/runtime-node-map/)
+  - 配套交互页：[运行节点图](/graph/)（节点可点、真实轨迹可回放）
 
 ### 架构笔记
 

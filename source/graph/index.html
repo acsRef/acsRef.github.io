@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReportAgent 运行节点图 · LangGraph 全链路</title>
+<style>
+  :root{
+    --ink:#14212b; --ink-2:#3d4f5c; --muted:#6b7f8c; --line:#dfe6ea;
+    --paper:#f6f4ef; --card:#ffffff; --teal:#0f766e; --teal-soft:#ecfdf5;
+    --amber:#b45309; --amber-soft:#fffbeb; --blue:#1d4ed8; --blue-soft:#eff6ff;
+    --violet:#6d28d9; --violet-soft:#f5f3ff; --rose:#be123c; --rose-soft:#fff1f2;
+    --slate:#64748b; --slate-soft:#f8fafc;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",-apple-system,Segoe UI,sans-serif;
+    background:var(--paper); color:var(--ink); font-size:14px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1720px;margin:0 auto;padding:22px 26px 60px}
+  header.top{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+  h1{margin:0;font-size:23px;letter-spacing:.2px;font-weight:700}
+  h1 small{display:block;font-size:12.5px;font-weight:400;color:var(--muted);margin-top:5px;letter-spacing:0}
+  .stats{display:flex;gap:10px;flex-wrap:wrap}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 13px;min-width:96px}
+  .stat b{display:block;font-size:18px;line-height:1.25;font-variant-numeric:tabular-nums}
+  .stat span{font-size:11.5px;color:var(--muted)}
+  nav.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 14px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  nav.tabs button{
+    font:inherit;font-size:13px;padding:7px 14px;border-radius:8px;cursor:pointer;
+    border:1px solid transparent;background:transparent;color:var(--ink-2);
+  }
+  nav.tabs button:hover{background:#eceae3}
+  nav.tabs button[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 372px;gap:18px;align-items:start}
+  @media (max-width:1180px){.layout{grid-template-columns:minmax(0,1fr)}}
+  .canvasCard{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .canvasHead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 15px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .canvasHead .t{font-weight:600;font-size:13.5px}
+  .canvasHead .f{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--muted)}
+  .replay{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .replay button{font:inherit;font-size:12px;padding:5px 11px;border-radius:7px;border:1px solid var(--line);background:#fff;cursor:pointer}
+  .replay button:hover{border-color:var(--ink-2)}
+  .replay select{font:inherit;font-size:12px;padding:4px 6px;border-radius:7px;border:1px solid var(--line);background:#fff}
+  .canvasScroll{overflow:auto;padding:12px;max-height:calc(100vh - 250px)}
+  svg{display:block}
+  /* edges */
+  path.edge{fill:none;stroke:#b9c6cf;stroke-width:1.7;marker-end:url(#arrow)}
+  path.edge.dash{stroke-dasharray:5 4}
+  path.edge.danger{stroke:#e0a3ae;marker-end:url(#arrowDanger)}
+  path.edge.loop{stroke:#cbb6ef;marker-end:url(#arrowViolet)}
+  path.edge.hot{stroke:var(--teal);stroke-width:2.6;marker-end:url(#arrowHot)}
+  text.elabel{font-size:10.5px;fill:var(--muted);paint-order:stroke;stroke:#fff;stroke-width:3.4px;stroke-linejoin:round}
+  text.elabel.hot{fill:var(--teal);font-weight:600}
+  /* nodes */
+  g.node{cursor:pointer}
+  g.node rect{stroke-width:1.6;transition:filter .12s}
+  g.node:hover rect{filter:drop-shadow(0 3px 7px rgba(20,33,43,.16))}
+  g.node .nlabel{font-size:13px;font-weight:600;fill:var(--ink)}
+  g.node .nid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:9.5px;fill:#8b9aa5}
+  g.node .nms{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;font-weight:600;fill:var(--amber)}
+  g.node.sel rect{stroke-width:3}
+  @keyframes nodePulse{
+    0%,100%{filter:drop-shadow(0 0 3px rgba(15,118,110,.35))}
+    50%{filter:drop-shadow(0 0 13px rgba(15,118,110,.85))}
+  }
+  g.node.playing rect{stroke:#0f766e;stroke-width:3.6;animation:nodePulse 1.1s ease-in-out infinite}
+  .dim{opacity:.22}
+  /* legend */
+  .legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 15px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-2)}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1.6px solid}
+  /* panel */
+  aside.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 17px;position:sticky;top:14px}
+  aside.panel h2{font-size:15px;margin:0 0 2px}
+  aside.panel .rid{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--muted);word-break:break-all}
+  aside.panel .code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:var(--teal);margin:8px 0 12px;word-break:break-all}
+  aside.panel h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin:15px 0 6px;font-weight:600}
+  aside.panel ul{margin:0;padding-left:17px}
+  aside.panel li{margin:3px 0;font-size:12.8px;color:var(--ink-2)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:11px;padding:2.5px 8px;border-radius:20px;background:var(--blue-soft);color:#1e40af;border:1px solid #dbeafe;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .chip.warn{background:var(--rose-soft);color:#9f1239;border-color:#fecdd3}
+  .chip.ok{background:var(--teal-soft);color:#0f766e;border-color:#a7f3d0}
+  .empty{color:var(--muted);font-size:12.5px}
+  /* overview cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 15px;cursor:pointer;transition:border-color .12s,transform .12s}
+  .card:hover{border-color:var(--teal);transform:translateY(-1px)}
+  .card .num{font-family:ui-monospace,monospace;font-size:11px;color:var(--teal)}
+  .card h3{margin:3px 0 6px;font-size:14.5px}
+  .card p{margin:0;font-size:12.5px;color:var(--ink-2)}
+  .card .meta{margin-top:9px;font-size:11.5px;color:var(--muted);display:flex;gap:12px}
+  table.phase{border-collapse:collapse;width:100%;font-size:12px;margin-top:6px}
+  table.phase th,table.phase td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.phase th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+  code.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;background:#f1f4f6;padding:1px 5px;border-radius:4px}
+  .note{font-size:12px;color:var(--muted);margin-top:10px}
+  .banner{background:var(--teal-soft);border:1px solid #a7f3d0;color:#0f766e;border-radius:10px;padding:9px 13px;font-size:12.5px;margin-bottom:12px}
+  .banner b{font-weight:700}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>ReportAgent 运行节点图
+      <small>LangGraph 5 张图 · 真实 trace 回放（2026-11-11 实测，67 个 span） · <a href="/posts/runtime-node-map/" style="color:var(--teal)">← 回到文章</a></small>
+    </h1>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+
+  <div id="overview" class="canvasCard">
+    <div class="canvasHead">
+      <div class="t">五张图怎么拼起来</div>
+      <div class="f">点卡片进入对应图 · 节点名/边都来自代码，不是示意</div>
+    </div>
+    <div class="cards" id="cards"></div>
+    <div class="canvasHead" style="border-top:1px solid var(--line)">
+      <div class="t">一次真实请求的耗时分布</div>
+      <div class="f">同一 session：需求阶段 26.8s · 执行阶段 34.4s</div>
+    </div>
+    <div style="padding:4px 16px 16px">
+      <table class="phase">
+        <thead><tr><th>阶段</th><th>最贵节点</th><th>实测</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>需求理解</td><td><code class="mono">turn_understand</code></td><td><b>25.8s</b></td><td>思考预算 1536 token 的推理模型，单项占需求阶段 96%</td></tr>
+          <tr><td>SQL 执行</td><td><code class="mono">sql_plan</code> + <code class="mono">sql_generate</code></td><td>8.3s + 5.5s</td><td>中间还夹一次 <code class="mono">embedding</code> 6.9s（FAQ/口径召回）</td></tr>
+          <tr><td>报告生成</td><td><code class="mono">report_build_output</code></td><td>7.3s</td><td>叙述模型 + 数字锚定校验，失败退回确定性结论</td></tr>
+          <tr><td>真正查库</td><td><code class="mono">sql_execute</code></td><td>43ms</td><td>全链路最便宜的一步——成本几乎全在模型侧</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        SSE v2 七事件与节点的对应：<code class="mono">phase</code>（进 awaiting_confirm / generating / report_ready）·
+        <code class="mono">requirement</code>（persist_draft 发）· <code class="mono">trace</code>（每个节点开/关都发）·
+        <code class="mono">thinking</code>（turn_understand 流式思考）· <code class="mono">report</code> + <code class="mono">done</code>（persist_report 之后）。
+      </div>
+    </div>
+  </div>
+
+  <div class="layout hidden" id="graphArea">
+    <div class="canvasCard">
+      <div class="canvasHead">
+        <div>
+          <div class="t" id="gTitle"></div>
+          <div class="f" id="gFile"></div>
+        </div>
+        <div class="replay">
+          <button id="btnPlay">▶ 回放真实轨迹</button>
+          <button id="btnReset">重置</button>
+          <select id="speed">
+            <option value="1">1×</option>
+            <option value="2" selected>2×</option>
+            <option value="4">4×</option>
+          </select>
+          <span id="playState"></span>
+        </div>
+      </div>
+      <div class="canvasScroll" id="canvasScroll"></div>
+      <div class="legend">
+        <span><i style="border-color:var(--teal);background:var(--teal-soft)"></i>确定性节点</span>
+        <span><i style="border-color:var(--amber);background:var(--amber-soft)"></i>调模型</span>
+        <span><i style="border-color:var(--blue);background:var(--blue-soft)"></i>工具</span>
+        <span><i style="border-color:var(--violet);background:var(--violet-soft)"></i>子图</span>
+        <span><i style="border-color:var(--rose);background:var(--rose-soft)"></i>校验闸</span>
+        <span><i style="border-color:var(--slate);background:var(--slate-soft)"></i>终点</span>
+        <span style="margin-left:auto;color:var(--muted)">点节点看职责 · 右上角「回放」按真实 span 顺序点亮</span>
+      </div>
+    </div>
+    <aside class="panel" id="panel"><div class="empty">点左边任意节点，这里显示它的职责、输入输出、失败分支和实测耗时。</div></aside>
+  </div>
+</div>
+
+<script>
+/* ────────────────────────────────────────────────────────────────────────────
+   数据：全部来自代码（节点名 / 边 / 行号）+ 一次真实请求的 trace 耗时。
+   kind: det 确定性 | llm 调模型 | tool 工具 | sub 子图 | gate 校验闸 | end 终点
+   trace: 真实 span 名（没有就是本轮没走到）
+   ──────────────────────────────────────────────────────────────────────────── */
+const K = {det:["#0f766e","#ecfdf5"], llm:["#b45309","#fffbeb"], tool:["#1d4ed8","#eff6ff"],
+           sub:["#6d28d9","#f5f3ff"], gate:["#be123c","#fff1f2"], end:["#64748b","#f8fafc"]};
+
+function N(id, label, x, y, kind, opts){ return Object.assign({id, label, x, y, w:176, h:62, kind}, opts||{}); }
+function E(from, to, opts){ return Object.assign({from, to}, opts||{}); }
+
+const GRAPHS = [
+{
+  key:"req", num:"图 ①", title:"需求理解图", node:"requirement_analysis_graph",
+  file:"backend/app/agent/requirement_analysis_graph.py:842",
+  blurb:"一条用户消息进来先过安全闸，再分岔成闲聊 / 外部接口 / 报表；报表走「理解 → 归并 → 可报告性 → 投影」四段，最后落一张需求卡。",
+  w:1120, h:1250,
+  nodes:[
+    N("security_guard","安全检查",60,30,"det",{trace:"requirement_security_guard",ms:0,code:"requirement_analysis_graph.py:91",
+      duty:"入口第一道闸：prompt 注入检测 + 风险打分。",
+      points:["分数 ≥3 → security_level=HIGH，直接 END，后面的节点一个都不跑","通过则把 user_id / query 写进 State，交给意图分类"],
+      branch:"HIGH → END（这条分支在图上用红色虚线画）"}),
+    N("classify_intent","识别意图",60,150,"llm",{trace:"requirement_intent",ms:563,code:"requirement_analysis_graph.py:154",
+      duty:"判定这一轮属于闲聊、外部接口需求，还是报表分析。",
+      points:["只有 report / dashboard / unknown 会进入数据准备","模型只给标签，怎么分岔由 _route_intent 的代码决定"],
+      points2:[]}),
+    N("casual_reply","闲聊回复",20,290,"llm",{code:"requirement_analysis_graph.py:175",
+      duty:"非业务问题直接回答，不建需求卡、不落库。",
+      points:["终态 phase=idle，前端渲染成闲聊气泡"]}),
+    N("interface_requirement","外部接口需求",250,290,"llm",{code:"requirement_analysis_graph.py:187",
+      duty:"需求指向实时接口/流式数据源时，产出接口说明而不是 SQL。",
+      points:["由假设项 data_source:stream 标记，执行侧据此跳过 SQL"]}),
+    N("data_agent","数据准备（子图）",480,290,"sub",{trace:"requirement_data_agent",ms:314,code:"requirement_analysis_graph.py:216",
+      duty:"调 data_graph 子图：意图 → schema 检索 → 拼上下文。",
+      points:["schema 检索走 MCP 的 search_tables，MCP 不可用才回落本地关键词匹配","本轮 314ms，其中 schema 检索 309ms"],
+      tools:["search_tables","get_table_ddl"]}),
+    N("turn_understand","理解这一轮",480,410,"llm",{trace:"turn_understand",ms:25777,code:"requirement_analysis_graph.py:576",
+      duty:"把用户原话读成 TurnPlan：对话行为、分析目标、要更新/清空哪些字段、证据。",
+      points:["思考预算 TURN_THINKING_BUDGET=1536，超时就收尾去写 JSON","单次超时 90s，快速重试 30s，一轮总预算 120s","失败（turn_plan 为空）回落 requirement_parse，不猜"],
+      warn:"实测 25.8s —— 全链路最大的单项成本，占需求阶段 96%"}),
+    N("task_reduce","归并任务",480,530,"det",{trace:"task_reduce",ms:9,code:"requirement_analysis_graph.py:643",
+      duty:"纯函数：把 TurnPlan 合到当前任务上，并把原话里的字面事实回填。",
+      points:["顺序固定 clear → update → preserve，没提到的字段沿用上一轮","代码侧做最后裁决（模型把「具体情况」读成「逐条明细」时按原话否决）","绝对年份 / 去年前年 / 数据范围 / 点名口径都在这里补，不依赖采样"],
+      warn:"这里回填而不是卡片层回填 —— 多轮继承读的是任务，只补卡片等于每轮都丢"}),
+    N("reportability","可报告性",480,650,"det",{trace:"reportability",ms:0,code:"requirement_analysis_graph.py:671",
+      duty:"判定这张卡能不能直接出数：READY / NEED_MORE / NOT_REPORTABLE。",
+      points:["NEED_MORE 会把缺的字段渲染成澄清选项","口径有多个候选时把 preferred_metrics 按原话排序"]}),
+    N("requirement_project","投影需求卡",480,770,"det",{trace:"requirement_project",ms:0,code:"requirement_analysis_graph.py:751",
+      duty:"任务状态 → RequirementCard；status 由 missing_fields 与假设项双向反算。",
+      points:["单一事实源是任务层，卡片只是投影","已满足的缺失字段在这里被丢弃，避免卡片显示「待补充」但实际不缺"]}),
+    N("requirement_preview","口径预览",480,890,"tool",{trace:"requirement_preview",ms:0,code:"requirement_analysis_graph.py:454",
+      duty:"口径有歧义时跑一条目录式只读查询取一个总量，给澄清选项加数值提示。",
+      points:["SQL 由 metrics.yaml 的 expr/joins 拼装，无 LLM、无自由列名、无 GROUP BY","fail-open：解析失败/超时/空值就退回纯文字选项，绝不展示 0 元假数"],
+      tools:["metric_preview_service","execute_sql"]}),
+    N("persist_draft","保存需求卡",480,1010,"det",{trace:"requirement_persist_draft",ms:13,code:"requirement_analysis_graph.py:357",
+      duty:"落 agent.requirement_draft，然后发 SSE。",
+      points:["发 requirement 事件（整张卡）+ phase=awaiting_confirm","同一 session 的 draft 版本号递增，旧版本可回看"]}),
+    N("requirement_parse","通用解析（回落）",810,410,"llm",{code:"requirement_analysis_graph.py:262",
+      duty:"TURN_UNDERSTANDING=0 或理解失败时的单轮解析器。",
+      points:["与 turn 链路共用同一个时间决策函数 resolve_time_range","两条流水线的口径由契约测试钉死一致，不许各写一套"]}),
+    N("END_high","END",810,30,"end",{w:96,h:44,label:"END（拦截）"}),
+    N("END_main","END",520,1150,"end",{w:96,h:44})
+  ],
+  edges:[
+    E("security_guard","classify_intent",{label:"无风险"}),
+    E("security_guard","END_high",{label:"HIGH 拦截",dash:true,danger:true,d:"M 236 61 H 806"}),
+    E("classify_intent","casual_reply",{label:"闲聊"}),
+    E("classify_intent","interface_requirement",{label:"外部接口"}),
+    E("classify_intent","data_agent",{label:"报表"}),
+    E("data_agent","turn_understand",{label:"TURN_UNDERSTANDING=1"}),
+    E("data_agent","requirement_parse",{label:"回退",dash:true,d:"M 656 321 H 760 V 441 H 810"}),
+    E("turn_understand","task_reduce",{label:"理解成功"}),
+    E("turn_understand","requirement_parse",{label:"理解失败 → 回落",dash:true,d:"M 656 441 H 810"}),
+    E("task_reduce","reportability"),
+    E("reportability","requirement_project"),
+    E("requirement_project","requirement_preview"),
+    E("requirement_parse","requirement_preview",{label:"投影",d:"M 898 472 V 921 H 656"}),
+    E("requirement_preview","persist_draft"),
+    E("interface_requirement","persist_draft",{label:"跳过 SQL",dash:true,d:"M 338 352 V 1041 H 480"}),
+    E("persist_draft","END_main",{d:"M 568 1072 V 1150"}),
+    E("casual_reply","END_main",{dash:true,d:"M 108 352 V 1172 H 520"})
+  ]
+},
+{
+  key:"conf", num:"图 ②", title:"确认执行图", node:"confirmed_execution_graph",
+  file:"backend/app/agent/confirmed_execution_graph.py:1390",
+  blurb:"用户点「确认」之后的链路：二次安全检查 → 加载并校验已确认的需求 → 幂等闸 → 分流 → SQL 子图 → 报告子图 → 三态落库。",
+  w:1120, h:1020,
+  nodes:[
+    N("security_guard","二次安全检查",60,30,"det",{trace:"confirmed_security_guard",ms:0,code:"confirmed_execution_graph.py:114",
+      duty:"入口再查一次注入：会话里可能带着上一轮的脏上下文。",
+      points:["SecurityRejectedError → SSE SECURITY_REJECTED，不产生报告版本"]}),
+    N("load_confirmed_requirement","加载已确认需求",60,140,"det",{trace:"load_confirmed_requirement",ms:3,code:"confirmed_execution_graph.py:129",
+      duty:"读 draft 并过四道 gate：status=complete、无缺失字段、假设已决、owner 匹配。",
+      points:["任一不满足抛 ClarificationRequiredError，不执行","所有者校验用的是 JWT 里的 user_id，不取 body"]}),
+    N("idempotency_guard","幂等闸",60,250,"det",{trace:"confirmed_idempotency_guard",ms:2,code:"confirmed_execution_graph.py:166",
+      duty:"键 = session_id:draft_id。重复点确认、超时重发都不会二次执行。",
+      points:["已 done → 直接重放那个版本并 END（无 trace、不烧 LLM）","FAILED 允许重试；adjust 旁路"]}),
+    N("sql_gate","分流闸",60,370,"det",{trace:"sql_gate",ms:6,code:"confirmed_execution_graph.py:234",
+      duty:"外部接口需求 → interface_response；其余 → 数据准备 → SQL。",
+      points:["判定依据是需求卡里的 data_source:stream 假设"]}),
+    N("interface_response","接口说明",430,370,"det",{trace:"interface_response",ms:0,code:"confirmed_execution_graph.py:1365",
+      duty:"不查库，直接返回接口接入说明文本。",
+      points:["同样走三态落库（SUCCESS），用户能在版本历史里看到"]}),
+    N("data_agent","数据准备（子图）",60,480,"sub",{trace:"confirmed_data_agent",ms:6,code:"confirmed_execution_graph.py:256",
+      duty:"再跑一次 data_graph：确认后 schema 可能已变化。",
+      points:["本轮 6ms，schema 命中缓存"],
+      tools:["search_tables","get_table_ddl"]}),
+    N("sql_agent","SQL 子图",60,600,"sub",{trace:"confirmed_sql_agent",ms:20838,code:"confirmed_execution_graph.py:270",
+      duty:"plan → generate → validate → execute → evaluate → diagnose 的完整执行环。",
+      points:["实测 20.8s：embedding 6.9s + plan 8.3s + generate 5.5s + validate 50ms + execute 43ms","子图内部结构见「图 ③ SQL 子图」"],
+      warn:"repair 预算 SQL 2 次，用尽即 FAILED（不伪造成 SUCCESS）"}),
+    N("report_agent","报告子图",60,730,"sub",{trace:"confirmed_report_agent",ms:13173,code:"confirmed_execution_graph.py:839",
+      duty:"把 QueryResult 变成结构化 ReportSpec + 人话结论。",
+      points:["实测 13.2s：plan_analysis 5.9s（含偏好召回）+ build_output 7.3s","子图内部结构见「图 ④ 报告子图」"]}),
+    N("persist_report","三态落库",60,860,"det",{trace:"persist_report",ms:247,code:"confirmed_execution_graph.py:1165",
+      duty:"SUCCESS / EMPTY / FAILED 全部写进 append-only 的 agent.report_version。",
+      points:["FAILED 带 error_kind + 尝试过的 SQL，前端渲染 ErrorCard","EMPTY 单独一条状态，不冒充有数据","发 report + done 两个 SSE 事件"]}),
+    N("END_replay","END（重放）",700,250,"end",{w:120,h:44,label:"END · 重放"}),
+    N("END_main","END",700,860,"end",{w:96,h:44})
+  ],
+  edges:[
+    E("security_guard","load_confirmed_requirement"),
+    E("load_confirmed_requirement","idempotency_guard"),
+    E("idempotency_guard","END_replay",{label:"已执行完成",dash:true,d:"M 236 281 H 700"}),
+    E("idempotency_guard","sql_gate",{label:"execute"}),
+    E("sql_gate","interface_response",{label:"外部接口"}),
+    E("sql_gate","data_agent",{label:"普通报表"}),
+    E("interface_response","persist_report",{label:"",dash:true,d:"M 518 401 V 891 H 236"}),
+    E("data_agent","sql_agent"),
+    E("sql_agent","report_agent"),
+    E("report_agent","persist_report"),
+    E("persist_report","END_main",{label:"三态都落库",d:"M 236 891 H 700"})
+  ]
+},
+{
+  key:"sql", num:"图 ③", title:"SQL 子图", node:"sql_graph",
+  file:"backend/app/agent/sql_graph.py:1649",
+  blurb:"执行环：先生成、再校验、再执行、再评估，评估不过就走诊断路由重来。三条回边（重生成 / 重规划 / 重取 schema）就是「Agent 而不是流水线」的地方。",
+  w:1120, h:412,
+  nodes:[
+    N("plan","查询计划",60,40,"llm",{trace:"sql_plan",ms:8280,code:"sql_graph.py:421",
+      duty:"决定查什么：目标口径、维度、过滤、聚合、时间范围。",
+      points:["明细模式在这里清空 dimensions 与聚合，避免模型又把它 SUM 起来","已确认粒度会确定性改写维度（月/季/年）"],
+      warn:"8.3s —— 是这条链路第二贵的一步"}),
+    N("generate_sql","生成 SQL",300,40,"llm",{trace:"sql_generate",ms:5509,code:"sql_graph.py:526",
+      duty:"拼 schema + 口径提示 + fewshot + repair 上下文，产出可执行 SQL。",
+      points:["校验失败时带 RepairContext 重生成：上一条 SQL、错误分类、违规原文","本轮 5.5s，含一次 6.9s 的 FAQ/口径 embedding 召回（部分重叠）"],
+      tools:["search_faq"]}),
+    N("validate","校验闸",540,40,"gate",{trace:"sql_validate",ms:50,code:"sql_graph.py:1196",
+      duty:"六道安全闸 + EXPLAIN + 今天的语义契约。",
+      points:["安全：只读 / 关键字黑名单 / AST 顶层必须 Select / 危险函数 / 表白名单 / EXPLAIN","语义契约：明细模式禁止聚合、最高期的过滤必须真出现、同比必须真算","今天新增：C1 必需过滤缺失、C2 必需过滤写进外连接 ON —— 违规不放过，交给 repair 重写"],
+      warn:"50ms，但它是全链路唯一能拦住「SQL 能跑但结果是错的」的地方"}),
+    N("execute","执行",800,40,"tool",{trace:"sql_execute",ms:43,code:"sql_graph.py:1250",
+      duty:"用 ragent_readonly 角色执行，带 statement timeout。",
+      points:["43ms —— 全链路最便宜的一步，成本几乎全在模型侧"],
+      tools:["execute_sql"]}),
+    N("evaluate","评估",800,170,"det",{trace:"sql_evaluate",ms:0,code:"sql_graph.py:1292",
+      duty:"把结果分成 SUCCESS / EMPTY / FAILED，并区分错误种类。",
+      points:["object_not_found / permission / timeout / connection 各有不同路由","今天新增 SUSPECT_NULL_GROUP 告警：分组维度出现 NULL 就记日志（只告警，不硬拦）"]}),
+    N("diagnose","诊断路由",540,170,"det",{trace:"sql_diagnose",ms:0,code:"sql_graph.py:1388",
+      duty:"DiagnosePolicy 纯确定性决策：重生成 / 重取 schema / 重规划 / 收尾 / 失败。",
+      points:["预算固定：SQL repair 2 次、MCP 2 次，不许无限重试","决策连同 reason、retry_counters 一起进 trace，可回放"]}),
+    N("build_output","整理结果",540,300,"det",{trace:"sql_build_output",ms:0,code:"sql_graph.py:1565",
+      duty:"产出 QueryResult + SQL 快照，交给报告子图。",
+      points:["快照里带真实 SQL，前端「查看 SQL」看到的就是这条"]}),
+    N("END","END",800,300,"end",{w:96,h:44})
+  ],
+  edges:[
+    E("plan","generate_sql"),
+    E("generate_sql","validate"),
+    E("validate","execute",{label:"valid"}),
+    E("validate","evaluate",{label:"invalid",dash:true,danger:true,d:"M 628 102 V 136 H 888 V 170",at:[766,130]}),
+    E("execute","evaluate"),
+    E("evaluate","diagnose"),
+    E("diagnose","generate_sql",{label:"retry_sql / retry_mcp",loop:true,d:"M 540 201 H 505 V 71 H 476",at:[500,152],anchor:"end"}),
+    E("diagnose","plan",{label:"replan",loop:true,d:"M 540 225 H 522 V 392 H 148 V 102",at:[300,386]}),
+    E("diagnose","build_output",{label:"end",d:"M 628 232 V 300",at:[636,266]}),
+    E("diagnose","END",{label:"fail",dash:true,danger:true,d:"M 716 201 H 780 V 322 H 800",at:[762,212]}),
+    E("build_output","END",{d:"M 716 331 H 800"})
+  ]
+},
+{
+  key:"report", num:"图 ④", title:"报告子图", node:"report_graph",
+  file:"backend/app/agent/report_graph.py:554",
+  blurb:"先规划要产出哪些 block（同时把记忆里的图表偏好读出来），再逐步执行，最后组装成 ReportSpec 并生成人话结论。",
+  w:1060, h:186,
+  nodes:[
+    N("plan_analysis","报告规划",60,40,"llm",{trace:"report_plan_analysis",ms:5872,code:"report_graph.py:89",
+      duty:"决定这份报告要哪些 block、怎么讲，并召回图表偏好。",
+      points:["偏好是软约束：数据不支持饼图时让位给表格","5.9s，含一次 ContextRuntime 召回"]}),
+    N("run_step","逐步执行",330,40,"tool",{trace:"report_run_step",ms:0,code:"report_graph.py:162",
+      duty:"按规划逐条跑分析步骤（占比、集中度、极值…）。",
+      points:["自环：还有步骤就回到自己，走完才去组装"],
+      tools:["chart_advisor","insight_analyst","group_compare"]}),
+    N("build_output","组装报告",600,40,"llm",{trace:"report_build_output",ms:7290,code:"report_graph.py:464",
+      duty:"产出 ReportSpec + 人话结论（结论/证据/原因/建议）。",
+      points:["数字锚定：叙述里每个数都要对得上结果集或派生量（合计/均值）","叙述不合格就退回确定性结论 —— 空值分组不会冒充「最高的那个月」","7.3s，报告的 LLM 成本主要在这里"]}),
+    N("END","END",860,40,"end",{w:96,h:44})
+  ],
+  edges:[
+    E("plan_analysis","run_step"),
+    E("run_step","run_step",{label:"还有步骤",loop:true,d:"M 400 40 C 400 8 470 8 470 40",at:[434,16]}),
+    E("run_step","build_output",{label:"步骤走完"}),
+    E("build_output","END")
+  ]
+},
+{
+  key:"data", num:"图 ⑤", title:"数据准备子图", node:"data_graph",
+  file:"backend/app/agent/data_graph.py:86",
+  blurb:"两张父图都会调它：先判意图，再检索 schema，最后拼成给下游的上下文。因为两边共用，所以这里的口径必须和 MCP 通道一致。",
+  w:1060, h:150,
+  nodes:[
+    N("detect_intent","判意图",60,40,"det",{trace:"data_detect_intent",ms:0,code:"data_graph.py:30",
+      duty:"判断这次要查业务表还是接口文档。",
+      points:["结果决定后面检索哪一套字典"]}),
+    N("search_schema","schema 检索",330,40,"tool",{trace:"data_search_schema",ms:309,code:"data_graph.py:46",
+      duty:"经 MCP 的 search_tables 取表/字段，MCP 不可用才回落本地关键词匹配。",
+      points:["309ms —— 一次 MCP 往返 + 本地兜底判断","MCP 失败会显式标注 unavailable，不返回空数组冒充「没结果」"],
+      tools:["search_tables","get_table_ddl"]}),
+    N("build_context","拼上下文",600,40,"det",{trace:"data_build_context",ms:1,code:"data_graph.py:60",
+      duty:"把命中的表结构、口径提示、FAQ 片段拼成给下游的上下文。",
+      points:["1ms，纯字符串处理","上下文预算由 ContextRuntime 控制，不在这里塞满"]}),
+    N("END","END",860,40,"end",{w:96,h:44})
+  ],
+  edges:[
+    E("detect_intent","search_schema"),
+    E("search_schema","build_context"),
+    E("build_context","END")
+  ]
+}
+];
+
+/* 真实 trace（同一 session，按 span 开始时间排序；只有 NODE 类型进回放） */
+const TRACE = [
+  ["req","security_guard",0],["req","classify_intent",563],["req","data_agent",314],
+  ["data","detect_intent",0],["data","search_schema",309],["data","build_context",1],
+  ["req","turn_understand",25777],["req","task_reduce",9],["req","reportability",0],
+  ["req","requirement_project",0],["req","requirement_preview",0],["req","persist_draft",13],
+  ["conf","security_guard",0],["conf","load_confirmed_requirement",3],["conf","idempotency_guard",2],
+  ["conf","sql_gate",6],["conf","data_agent",6],
+  ["data","detect_intent",0],["data","search_schema",0],["data","build_context",0],
+  ["conf","sql_agent",20838],
+  ["sql","plan",8280],["sql","generate_sql",5509],["sql","validate",50],["sql","execute",43],
+  ["sql","evaluate",0],["sql","diagnose",0],["sql","build_output",0],
+  ["conf","report_agent",13173],
+  ["report","plan_analysis",5872],["report","run_step",0],["report","build_output",7290],
+  ["conf","persist_report",247]
+];
+
+/* ── 渲染 ───────────────────────────────────────────────────────────────── */
+const SVGNS = "http://www.w3.org/2000/svg";
+const $ = (s)=>document.querySelector(s);
+const byKey = {}; GRAPHS.forEach(g=>byKey[g.key]=g);
+let current = "req", selected = null, playTimer = null, playIdx = -1;
+
+function fmtMs(ms){
+  if (ms === undefined || ms === null) return "";
+  if (ms < 1000) return ms + "ms";
+  return (ms/1000).toFixed(ms < 60000 ? 1 : 0) + "s";
+}
+function anchor(n, side){
+  if (side==="right") return [n.x+n.w, n.y+n.h/2];
+  if (side==="left")  return [n.x, n.y+n.h/2];
+  if (side==="top")   return [n.x+n.w/2, n.y];
+  return [n.x+n.w/2, n.y+n.h];
+}
+function autoPath(a, b, e){
+  const [ax,ay,ah] = [a.x+a.w/2, a.y+a.h/2, a.h];
+  const [bx,by] = [b.x+b.w/2, b.y+b.h/2];
+  const dx = bx-ax, dy = by-ay;
+  // 同一行（高度不同会带来几像素偏差，按 14px 容差归到「同行」）
+  if (Math.abs(dy) < 14 && Math.abs(dx) > 26){
+    const p1 = anchor(a,"right"), p2 = anchor(b,"left");
+    const k = Math.max(26, Math.abs(p2[0]-p1[0])*0.45);
+    return `M ${p1[0]} ${p1[1]} C ${p1[0]+k} ${p1[1]} ${p2[0]-k} ${p2[1]} ${p2[0]} ${p2[1]}`;
+  }
+  if (Math.abs(dx) < 26 && dy > 0){            // 正下方
+    const p1 = anchor(a,"bottom"), p2 = anchor(b,"top");
+    const k = Math.max(28, Math.abs(p2[1]-p1[1])*0.45);
+    return `M ${p1[0]} ${p1[1]} C ${p1[0]} ${p1[1]+k} ${p2[0]} ${p2[1]-k} ${p2[0]} ${p2[1]}`;
+  }
+  if (dy > 0 && Math.abs(dx) > 60){            // 斜下方
+    const p1 = anchor(a,"bottom"), p2 = anchor(b,"top");
+    const k = Math.max(30, Math.abs(p2[1]-p1[1])*0.5);
+    return `M ${p1[0]} ${p1[1]} C ${p1[0]} ${p1[1]+k} ${p2[0]} ${p2[1]-k} ${p2[0]} ${p2[1]}`;
+  }
+  if (dy < 0){                                 // 回边：走上方弧
+    const p1 = anchor(a,"top"), p2 = anchor(b,"top");
+    const lift = 42 + Math.abs(p1[0]-p2[0])*0.06;
+    return `M ${p1[0]} ${p1[1]} C ${p1[0]} ${p1[1]-lift} ${p2[0]} ${p2[1]-lift} ${p2[0]} ${p2[1]}`;
+  }
+  // 兜底：右 → 左
+  const p1 = anchor(a,"right"), p2 = anchor(b,"left");
+  const k = Math.max(26, (p2[0]-p1[0])*0.45);
+  return `M ${p1[0]} ${p1[1]} C ${p1[0]+k} ${p1[1]} ${p2[0]-k} ${p2[1]} ${p2[0]} ${p2[1]}`;
+}
+function labelPos(a, b, e){
+  if (e.at) return e.at;                      // 手写坐标优先，避免压在节点上
+  if (e.d){
+    const m = e.d.match(/M ([\d.]+) ([\d.]+)/);
+    if (m) return [ +m[1] + 6, +m[2] - 10 ];
+    return [ (a.x + a.w + b.x) / 2, (a.y + b.y) / 2 ];
+  }
+  return [ (a.x+a.w/2 + b.x+b.w/2)/2, (a.y+a.h/2 + b.y+b.h/2)/2 - 6 ];
+}
+
+function buildGraph(g){
+  const svg = document.createElementNS(SVGNS,"svg");
+  svg.setAttribute("viewBox", `0 0 ${g.w} ${g.h}`);
+  svg.setAttribute("width", g.w); svg.setAttribute("height", g.h);
+  const defs = document.createElementNS(SVGNS,"defs");
+  defs.innerHTML = `
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b9c6cf"/></marker>
+    <marker id="arrowHot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/></marker>
+    <marker id="arrowDanger" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#e0a3ae"/></marker>
+    <marker id="arrowViolet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#cbb6ef"/></marker>`;
+  svg.appendChild(defs);
+
+  const nodeById = {}; g.nodes.forEach(n=>nodeById[n.id]=n);
+  const layerE = document.createElementNS(SVGNS,"g");
+  const layerL = document.createElementNS(SVGNS,"g");
+  const layerN = document.createElementNS(SVGNS,"g");
+  svg.append(layerE, layerL, layerN);
+
+  g.edges.forEach(e=>{
+    const a = nodeById[e.from], b = nodeById[e.to];
+    if (!a || !b) return;
+    const d = e.d || autoPath(a,b,e);
+    const p = document.createElementNS(SVGNS,"path");
+    p.setAttribute("d", d);
+    p.setAttribute("class", "edge" + (e.dash?" dash":"") + (e.danger?" danger":"") + (e.loop?" loop":""));
+    p.dataset.from = e.from; p.dataset.to = e.to;
+    layerE.appendChild(p);
+
+    // 箭头终点用 marker，起终点裁到节点边界（数据里已手写或由 anchor 给出）
+    if (e.label){
+      const [lx,ly] = labelPos(a,b,e);
+      const t = document.createElementNS(SVGNS,"text");
+      t.setAttribute("x", lx); t.setAttribute("y", ly);
+      t.setAttribute("class","elabel"); t.dataset.from = e.from; t.dataset.to = e.to;
+      if (e.anchor) t.setAttribute("text-anchor", e.anchor);
+      t.textContent = e.label;
+      layerL.appendChild(t);
+    }
+  });
+
+  g.nodes.forEach(n=>{
+    const [stroke, fill] = K[n.kind];
+    const grp = document.createElementNS(SVGNS,"g");
+    grp.setAttribute("class","node"); grp.dataset.id = n.id;
+    const rect = document.createElementNS(SVGNS,"rect");
+    rect.setAttribute("x", n.x); rect.setAttribute("y", n.y);
+    rect.setAttribute("width", n.w); rect.setAttribute("height", n.h);
+    rect.setAttribute("rx", 10);
+    rect.setAttribute("fill", fill); rect.setAttribute("stroke", stroke);
+    if (n.kind === "sub") rect.setAttribute("stroke-dasharray","6 4");
+    grp.appendChild(rect);
+
+    const isEnd = n.kind === "end";
+    const lbl = document.createElementNS(SVGNS,"text");
+    lbl.setAttribute("x", n.x + n.w/2); lbl.setAttribute("y", n.y + (isEnd ? n.h/2 + 5 : 24));
+    lbl.setAttribute("text-anchor","middle"); lbl.setAttribute("class","nlabel");
+    lbl.textContent = n.label;
+    grp.appendChild(lbl);
+
+    if (!isEnd){
+      const idt = document.createElementNS(SVGNS,"text");
+      idt.setAttribute("x", n.x + n.w/2); idt.setAttribute("y", n.y + 42);
+      idt.setAttribute("text-anchor","middle"); idt.setAttribute("class","nid");
+      idt.textContent = n.node || n.id;
+      grp.appendChild(idt);
+
+      if (n.ms !== undefined){
+        const ms = document.createElementNS(SVGNS,"text");
+        ms.setAttribute("x", n.x + n.w - 10); ms.setAttribute("y", n.y + n.h - 9);
+        ms.setAttribute("text-anchor","end"); ms.setAttribute("class","nms");
+        ms.textContent = fmtMs(n.ms);
+        grp.appendChild(ms);
+      }
+    }
+    grp.addEventListener("click", ()=>{ selectNode(g.key, n.id); });
+    grp.addEventListener("mouseenter", ()=>hover(g.key, n.id, true));
+    grp.addEventListener("mouseleave", ()=>hover(g.key, n.id, false));
+    layerN.appendChild(grp);
+  });
+  return svg;
+}
+
+/* ── 交互 ───────────────────────────────────────────────────────────────── */
+function hover(key, id, on){
+  const g = byKey[key];
+  const svg = $("#canvasScroll").querySelector("svg");
+  if (!svg) return;
+  if (!on){
+    svg.querySelectorAll(".dim").forEach(el=>el.classList.remove("dim"));
+    svg.querySelectorAll(".edge.hot").forEach(el=>el.classList.remove("hot"));
+    svg.querySelectorAll(".elabel.hot").forEach(el=>el.classList.remove("hot"));
+    return;
+  }
+  const keep = new Set([id]);
+  g.edges.forEach(e=>{ if (e.from===id) keep.add(e.to); if (e.to===id) keep.add(e.from); });
+  svg.querySelectorAll("g.node").forEach(el=>{
+    el.classList.toggle("dim", !keep.has(el.dataset.id));
+  });
+  svg.querySelectorAll("path.edge").forEach(el=>{
+    const hot = el.dataset.from===id || el.dataset.to===id;
+    el.classList.toggle("hot", hot);
+  });
+  svg.querySelectorAll("text.elabel").forEach(el=>{
+    const hot = el.dataset.from===id || el.dataset.to===id;
+    el.classList.toggle("hot", hot);
+  });
+}
+
+function selectNode(key, id){
+  const g = byKey[key], n = g.nodes.find(x=>x.id===id);
+  if (!n) return;
+  selected = key + ":" + id;
+  const svg = $("#canvasScroll").querySelector("svg");
+  if (svg) svg.querySelectorAll("g.node").forEach(el=>el.classList.toggle("sel", el.dataset.id===id));
+
+  const kindName = {det:"确定性节点", llm:"调模型", tool:"工具", sub:"子图", gate:"校验闸", end:"终点"}[n.kind];
+  const parts = [];
+  parts.push(`<h2>${n.label}</h2>`);
+  parts.push(`<div class="rid">${n.node || n.id} · ${kindName}</div>`);
+  if (n.code) parts.push(`<div class="code">${n.code}</div>`);
+  if (n.duty) parts.push(`<p style="margin:0 0 4px;font-size:13px">${n.duty}</p>`);
+  if (n.ms !== undefined){
+    parts.push(`<h3>实测耗时</h3><div><span class="chip ok">${fmtMs(n.ms)}</span> <span class="chip">${n.trace}</span></div>`);
+  }
+  if (n.points && n.points.length){
+    parts.push(`<h3>关键行为</h3><ul>${n.points.map(p=>`<li>${p}</li>`).join("")}</ul>`);
+  }
+  if (n.warn) parts.push(`<h3>要留意</h3><div><span class="chip warn">${n.warn}</span></div>`);
+  if (n.tools) parts.push(`<h3>用到的工具</h3><div class="chips">${n.tools.map(t=>`<span class="chip">${t}</span>`).join("")}</div>`);
+  if (n.branch) parts.push(`<h3>分支</h3><div class="chips"><span class="chip warn">${n.branch}</span></div>`);
+  const outs = g.edges.filter(e=>e.from===id).map(e=>{
+    const t = g.nodes.find(x=>x.id===e.to);
+    return `<li>→ ${t?t.label:e.to}${e.label?` <span style="color:#6b7f8c">（${e.label}）</span>`:""}</li>`;
+  });
+  if (outs.length) parts.push(`<h3>流向</h3><ul>${outs.join("")}</ul>`);
+  const ins = g.edges.filter(e=>e.to===id).map(e=>{
+    const t = g.nodes.find(x=>x.id===e.from);
+    return `<li>← ${t?t.label:e.from}${e.label?` <span style="color:#6b7f8c">（${e.label}）</span>`:""}</li>`;
+  });
+  if (ins.length) parts.push(`<h3>上游</h3><ul>${ins.join("")}</ul>`);
+  $("#panel").innerHTML = parts.join("");
+}
+
+function show(key, opts){
+  const keepPlay = !!(opts && opts.keepPlay);
+  if (!keepPlay){ stopPlay(); playIdx = -1; $("#playState").textContent = ""; }
+  current = key;
+  $("#overview").classList.toggle("hidden", key !== "overview");
+  $("#graphArea").classList.toggle("hidden", key === "overview");
+  document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.key===key)));
+  if (key === "overview") return;
+  const g = byKey[key];
+  $("#gTitle").textContent = `${g.num} · ${g.title}（${g.nodes.length} 节点 / ${g.edges.length} 边）`;
+  $("#gFile").textContent = `${g.node} → ${g.file}`;
+  $("#canvasScroll").innerHTML = "";
+  $("#canvasScroll").appendChild(buildGraph(g));
+  if (!keepPlay){
+    $("#panel").innerHTML = `<div class="empty">${g.blurb}<br><br>点任意节点看职责、输入输出、失败分支和实测耗时。</div>`;
+    selected = null;
+  }
+}
+
+/* ── 真实轨迹回放 ───────────────────────────────────────────────────────── */
+function stopPlay(){
+  if (playTimer){ clearTimeout(playTimer); playTimer = null; }
+  $("#btnPlay").textContent = "▶ 回放真实轨迹";
+  document.querySelectorAll("g.node.playing").forEach(el=>el.classList.remove("playing"));
+}
+function resetPlay(){
+  stopPlay(); playIdx = -1; $("#playState").textContent = "";
+  const svg = $("#canvasScroll").querySelector("svg");
+  if (svg) svg.querySelectorAll("g.node").forEach(el=>el.classList.remove("playing"));
+}
+function startPlay(){
+  if (playTimer){ stopPlay(); return; }          // 再点一次 = 暂停
+  if (playIdx >= TRACE.length - 1 || playIdx < 0){
+    playIdx = -1;
+    const svg = $("#canvasScroll").querySelector("svg");
+    if (svg) svg.querySelectorAll("g.node").forEach(el=>el.classList.remove("playing"));
+  }
+  const speed = Number($("#speed").value);
+  $("#btnPlay").textContent = "⏸ 暂停";
+  step();
+  function step(){
+    playIdx++;
+    if (playIdx >= TRACE.length){
+      stopPlay();
+      $("#playState").textContent = `回放结束 · 累计 ${fmtMs(TRACE.reduce((s,t)=>s+t[2],0))}`;
+      return;
+    }
+    const [gk, gid, ms] = TRACE[playIdx];
+    if (gk !== current) show(gk, {keepPlay:true});
+    const svg = $("#canvasScroll").querySelector("svg");
+    if (svg){
+      svg.querySelectorAll("g.node").forEach(el=>el.classList.remove("playing"));
+      const el = svg.querySelector(`g.node[data-id="${gid}"]`);
+      if (el) el.classList.add("playing");
+    }
+    const g = byKey[gk]; const n = g.nodes.find(x=>x.id===gid);
+    const done = TRACE.slice(0, playIdx+1).reduce((s,t)=>s+t[2],0);
+    $("#playState").textContent = `${playIdx+1}/${TRACE.length} · ${n?n.label:gid} ${fmtMs(ms)} · 累计 ${fmtMs(done)}`;
+    const wait = Math.max(140, Math.min(2400, 340 + ms*speed/12));
+    playTimer = setTimeout(step, wait);
+  }
+}
+
+/* ── 初始化 ─────────────────────────────────────────────────────────────── */
+const tabs = [["overview","总览"], ...GRAPHS.map(g=>[g.key, `${g.num} ${g.title}`])];
+$("#tabs").innerHTML = tabs.map(([k,label],i)=>{
+  const sel = k === "req" ? "true" : "false";
+  return `<button role="tab" data-key="${k}" aria-selected="${sel}">${label}</button>`;
+}).join("");
+$("#tabs").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if (!b) return;
+  stopPlay(); show(b.dataset.key);
+});
+
+const totalNodes = GRAPHS.reduce((s,g)=>s+g.nodes.length,0);
+const totalEdges = GRAPHS.reduce((s,g)=>s+g.edges.length,0);
+const totalMs = TRACE.reduce((s,t)=>s+t[2],0);
+$("#stats").innerHTML = [
+  [GRAPHS.length, "张 LangGraph 图"],
+  [totalNodes, "个节点"],
+  [totalEdges, "条边（含 3 条回边）"],
+  [fmtMs(totalMs), "一次真实请求累计"]
+].map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+
+$("#cards").innerHTML = GRAPHS.map(g=>{
+  const llm = g.nodes.filter(n=>n.kind==="llm").length;
+  const det = g.nodes.filter(n=>n.kind==="det").length;
+  return `<div class="card" data-key="${g.key}">
+    <div class="num">${g.num} · ${g.node}</div>
+    <h3>${g.title}</h3>
+    <p>${g.blurb}</p>
+    <div class="meta"><span>${g.nodes.length} 节点</span><span>${g.edges.length} 边</span><span>${det} 确定性 / ${llm} 调模型</span></div>
+  </div>`;
+}).join("") + `<div class="card" data-key="__trace">
+    <div class="num">回放 · 67 spans</div>
+    <h3>按真实轨迹走一遍</h3>
+    <p>进任意一张图点「回放真实轨迹」，会按 2026-11-11 那次请求的 span 顺序点亮节点，并显示每一步的真实耗时。跨图会自动切换。</p>
+    <div class="meta"><span>累计 ${fmtMs(totalMs)}</span><span>最贵 turn_understand 25.8s</span></div>
+  </div>`;
+$("#cards").addEventListener("click", e=>{
+  const c = e.target.closest(".card"); if (!c) return;
+  if (c.dataset.key === "__trace"){ show("req"); startPlay(); return; }
+  show(c.dataset.key);
+});
+
+$("#btnPlay").addEventListener("click", startPlay);
+$("#btnReset").addEventListener("click", ()=>{ resetPlay(); show(current); });
+
+show("req");
+</script>
+</body>
+</html>
