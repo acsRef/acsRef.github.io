@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" width="880" height="470" role="img" aria-label="对话压缩的双通道：叙述走模型，数据走确定性抽取">
+  <defs>
+    <marker id="cp-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7a"/>
+    </marker>
+    <style>
+      .g{fill:#fdfdfc;stroke:#c9d2da;stroke-width:1.4}
+      .m{fill:#f7f5fb;stroke:#9b8ec4;stroke-width:1.4}
+      .r{fill:#fdf2f2;stroke:#d99a9a;stroke-width:1.4}
+      .b{fill:#f4f8fd;stroke:#7ba7d4;stroke-width:1.4}
+      .y{fill:#fdf9ef;stroke:#d9b46a;stroke-width:1.4}
+      .t{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:11.5px;fill:#26323c}
+      .h{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;font-weight:600;fill:#26323c}
+      .s{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:10.5px;fill:#5b6b7a}
+      .e{stroke:#5b6b7a;stroke-width:1.4;fill:none;marker-end:url(#cp-arrow)}
+      .k{stroke:#9b8ec4;stroke-width:1.4;fill:none;marker-end:url(#cp-arrow)}
+      .d{stroke:#7ba7d4;stroke-width:1.4;fill:none;marker-end:url(#cp-arrow)}
+    </style>
+  </defs>
+
+  <text class="h" x="24" y="28">四个触发</text>
+  <rect class="b" x="24" y="42" width="188" height="46" rx="6"/>
+  <text class="t" x="38" y="62">token 压力</text>
+  <text class="s" x="38" y="78">≥ min(窗口×0.8, 窗口−输出−余量)</text>
+
+  <rect class="b" x="24" y="96" width="188" height="46" rx="6"/>
+  <text class="t" x="38" y="116">条数兜底</text>
+  <text class="s" x="38" y="132">消息数 &gt; 20（本产品消息很短）</text>
+
+  <rect class="m" x="24" y="150" width="188" height="46" rx="6"/>
+  <text class="t" x="38" y="170">手动 compact</text>
+  <text class="s" x="38" y="186">界面按钮 / POST /compact</text>
+
+  <rect class="r" x="24" y="204" width="188" height="46" rx="6"/>
+  <text class="t" x="38" y="224">context-overflow</text>
+  <text class="s" x="38" y="240">provider 报窗口超限 → 压一次再试</text>
+
+  <text class="h" x="248" y="28">保尾选范围</text>
+  <rect class="g" x="248" y="42" width="176" height="120" rx="6"/>
+  <text class="t" x="262" y="62">从最新往回攒 retain_tokens</text>
+  <text class="t" x="262" y="80">上限 10 条 / 下限 3 条</text>
+  <text class="t" x="262" y="98">绝不切开一问一答</text>
+  <text class="s" x="262" y="118">折叠区间 = 最老的前缀</text>
+  <text class="s" x="262" y="134">近期尾段一个字不动</text>
+  <text class="s" x="262" y="150">（DSH 的 tool-pair 边界 → turn 边界）</text>
+
+  <text class="h" x="472" y="28">两条通道，泾渭分明</text>
+
+  <rect class="m" x="472" y="42" width="384" height="86" rx="6"/>
+  <text class="t" x="486" y="62">叙述通道 → LLM 写 checkpoint（5 段）</text>
+  <text class="s" x="486" y="80">用户目标 / 已确认口径 / 用户纠正 / 已否决写法 / 未完成事项</text>
+  <text class="s" x="486" y="96">数字只能逐字引用；自己算的、四舍五入的一律判越界</text>
+  <text class="s" x="486" y="114">写坏了怎么办：退回确定性骨架（只留每句开头）</text>
+
+  <rect class="y" x="472" y="140" width="384" height="86" rx="6"/>
+  <text class="t" x="486" y="160">数据通道 → 确定性正则抽取（不经模型）</text>
+  <text class="s" x="486" y="178">日期 / 月份 / 年份 / 金额 / 百分比 / 订单号，逐字进 &lt;数据事实&gt;</text>
+  <text class="s" x="486" y="194">上限按条数而非字符：宁可少收几条，也不截半个金额</text>
+  <text class="s" x="486" y="212">口径的权威来源仍是结构化槽位，不是摘要散文</text>
+
+  <path class="e" d="M212 65 L246 65"/>
+  <path class="e" d="M212 119 L246 119"/>
+  <path class="e" d="M212 173 L246 173"/>
+  <path class="e" d="M212 227 L246 227"/>
+  <path class="k" d="M424 90 L470 85"/>
+  <path class="d" d="M424 132 L470 175"/>
+
+  <text class="h" x="24" y="286">四道守卫（任何一道不过 → 本轮不压缩，保持原文）</text>
+  <rect class="g" x="24" y="298" width="200" height="60" rx="6"/>
+  <text class="t" x="38" y="318">数值一致性</text>
+  <text class="s" x="38" y="336">checkpoint 里每个数字</text>
+  <text class="s" x="38" y="350">都要在事实块里逐字存在</text>
+
+  <rect class="g" x="236" y="298" width="200" height="60" rx="6"/>
+  <text class="t" x="250" y="318">shrink guard</text>
+  <text class="s" x="250" y="336">摘要不比被替换内容短</text>
+  <text class="s" x="250" y="350">就是白花一次调用</text>
+
+  <rect class="g" x="448" y="298" width="200" height="60" rx="6"/>
+  <text class="t" x="462" y="318">净收益守门</text>
+  <text class="s" x="462" y="336">渲染结果 ≥ 原文 → 放弃</text>
+  <text class="s" x="462" y="350">压缩不允许把上下文压大</text>
+
+  <rect class="g" x="660" y="298" width="196" height="60" rx="6"/>
+  <text class="t" x="674" y="318">失败降级</text>
+  <text class="s" x="674" y="336">LLM 抛错 / 判越界</text>
+  <text class="s" x="674" y="350">退确定性骨架，不丢空</text>
+
+  <rect class="b" x="24" y="382" width="832" height="64" rx="6"/>
+  <text class="t" x="38" y="404">实测（真数仓 + 真模型 + 40 轮会话）：原文 2352 字 ≈ 1171 tokens → 压缩后 876 字 ≈ 440 tokens（降 62%），</text>
+  <text class="t" x="38" y="422">折叠区间里每个日期/金额/百分比/订单号都在 &lt;数据事实&gt; 中逐字出现；checkpoint 数字对账 0 越界。</text>
+  <text class="s" x="38" y="438">token 估算也按实测校准：中文 1.67 字/token（旧的一刀切 3.0 会把中文低估 1.79 倍）。</text>
+</svg>

@@ -44,6 +44,7 @@ comments: false
 - 项目深挖（一）：记忆冲突与归并——为什么我放弃了余弦相似度
 - 项目深挖（二）：确定性裁决——把模型漏掉的「字面事实」补回来
 - [项目深挖（三）：我把后端杀了三次，才发现重试按钮永远不会亮](/posts/deepdive-crash-recovery/)
+- [项目深挖（四）：压缩对话的时候，有一类东西不能碰](/posts/deepdive-context-compaction/)
 
 ### 面试
 
