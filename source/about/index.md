@@ -46,6 +46,11 @@ comments: false
 - [项目深挖（三）：我把后端杀了三次，才发现重试按钮永远不会亮](/posts/deepdive-crash-recovery/)
 - [项目深挖（四）：压缩对话的时候，有一类东西不能碰](/posts/deepdive-context-compaction/)
 
+### 评测平台
+
+- [AI 评测平台（可实时跑 + 快照展示）](/eval/)：ReportAgent × ragent-py 双项目，判定分 deterministic / gold / deferred 三层
+- [我给自己搭了一个评测台：先把"证据档位"钉死](/posts/eval-platform/)
+
 ### 面试
 
 - Agent 面试题库精讲（教学版）：22 题，每题讲透 + 项目证据

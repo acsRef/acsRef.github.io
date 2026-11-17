@@ -30,6 +30,7 @@ code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
   - 'graph/**'
+  - 'eval/**'
 
 # ---------------- 写作 ----------------
 new_post_name: :year-:month-:day-:title.md
